@@ -128,10 +128,10 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 		// System.out.println(arg0.getActionCommand());
 		// TODO Auto-generated method stub
 		String command = arg0.getActionCommand();
-		if (command.equals("����")) {
+		if (command.equals("SAVE")) {
 			save();
 		}
-		if (command.equals("�μ�")) {
+		if (command.equals("PRINT")) {
 			printItemList();
 		}
 		if (command.equals("NOTE")) {
@@ -198,7 +198,7 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 	public void save() {
 		updateNoteToNode();
 		int count = treeModel.saveNodes();
-		JOptionPane.showMessageDialog(null, "���ڵ� " + count + "���� ����Ǿ����ϴ�.");
+		JOptionPane.showMessageDialog(null, "" + count + " recodes are saved");
 	}
 
 	public void printItemList() {

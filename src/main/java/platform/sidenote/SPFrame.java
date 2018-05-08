@@ -35,7 +35,7 @@ public class SPFrame extends JFrame {
 		this.setResizable(true);
 
 		build(this.getContentPane());
-		this.setTitle("���,�ݵ��,������,5Y,80:20,����");
+		this.setTitle("즉시,반드시,끝까지,5Y,80:20,마감");
 
 		// JEditorPane pan = new JEditorPane();
 		// pan.setFont(new Font("���� ���", 0, 15));

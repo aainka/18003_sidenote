@@ -43,22 +43,23 @@ public class OV_Task {
 		return subject;
 	}
 
- 
- 	public static List<OV_Task> decode(String s) {
- 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		Type listType = new TypeToken<List<OV_Task>>() {
-		}.getType();
- 	//	Gson gson = new GsonBuilder().setPrettyPrinting().create();
- 		List<OV_Task> list = gson.fromJson(s, listType);
- 		return list;
- 	}
+	public static List<OV_Task> decode(String s) {
+		// List<OV_Task> list = new ArrayList<OV_Task>();
 
-	public static void encode(StringWriter writer, List<OV_Task> tasks) {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		Type listType = new TypeToken<List<OV_Task>>() {
 		}.getType();
-		
-		gson.toJson(writer, listType);
-		
+		// Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		List<OV_Task> list = gson.fromJson(s, listType);
+		return list;
+	}
+
+	public static String encodeList(List<OV_Task> tasks) {
+		StringWriter writer = new StringWriter();
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		Type listType = new TypeToken<List<OV_Task>>() {
+		}.getType();
+		gson.toJson(tasks, listType, writer);
+		return writer.toString();
 	}
 }

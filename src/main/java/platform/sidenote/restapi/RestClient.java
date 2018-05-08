@@ -3,7 +3,6 @@ package platform.sidenote.restapi;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,6 +16,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
@@ -28,25 +28,64 @@ import org.json.simple.parser.ParseException;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import platform.sidenote.OV_Task;
 
 public class RestClient {
 
-	private HttpClient httpclient = new DefaultHttpClient();
+	private String url = "http://memo.fun25.co.kr:19803/aaa";
+	  HttpClient httpclient = new DefaultHttpClient();
 	private String session_token = null;
 	// private String url = "http://dm1401024591792.fun25.co.kr/api/V2/";
-	private String url = "http://localhost:8000/aaa";
+	// private String url = "http://localhost:8080/aaa";
+
 	private String apiKey = "6498a8ad1beb9d84d63035c5d1120c007fad6de706734db9689f8996707e0f7d";
-//	private ObjectMapper objectMapper = new ObjectMapper();
+	// private ObjectMapper objectMapper = new ObjectMapper();
 
 	public RestClient() {
-	//	objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-	//	objectMapper.setDateFormat(df);
+		// objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+		// objectMapper.setDateFormat(df);
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-	
+
+	}
+
+	public void update(List<OV_Task> tasks) throws JsonGenerationException, JsonMappingException, IOException {
+		
+		HttpPatch request = new HttpPatch(url + "/");
+		setApiKey(request);
+		String jString = OV_Task.encodeList(tasks);
+		{
+			StringEntity entity = new StringEntity(jString, "UTF-8");
+			entity.setContentType("application/json; charset=utf-8");
+			request.setEntity(entity);
+			HttpResponse response = httpclient.execute(request);
+			printResponse(response, null);
+		}
+	 
+		
+	}
+
+	public List<OV_Task> list() throws ClientProtocolException, IOException {
+		HttpGet request = new HttpGet(url + "/");
+		setApiKey(request);
+		HttpResponse response = httpclient.execute(request);
+		List<OV_Task> list = null;
+		HttpEntity entity = response.getEntity();
+		// System.out.println(response.getStatusLine());
+		if (entity != null) {
+			// System.out.println("--Response content length: " +
+			// entity.getContentLength());
+			String s = getEntityString(entity);
+			list = OV_Task.decode(s);
+			// try {
+			// ResourceUnit emp = objectMapper.readValue(s.getBytes(), ResourceUnit.class);
+			// System.out.println("Response = " + emp);
+			// } catch (IOException e1) {
+			// // TODO Auto-generated catch block
+			// e1.printStackTrace();
+			// }
+		}
+		return list;
 	}
 
 	private void test() {
@@ -84,7 +123,7 @@ public class RestClient {
 
 	public int insert(List<OV_Task> tasks) throws JsonGenerationException, JsonMappingException, IOException {
 		HttpPost request = new HttpPost(url + "/");
-		request.setEntity(encodeBody(tasks));
+	//	request.setEntity(encodeBody(tasks));
 		HttpResponse response = httpclient.execute(request);
 		HttpEntity entity = response.getEntity();
 		if (entity != null) {
@@ -95,34 +134,7 @@ public class RestClient {
 		}
 		return 0;
 	}
-	
-	public List<OV_Task> list() throws ClientProtocolException, IOException {
-		HttpGet request = new HttpGet(url + "/");
-		setApiKey(request);
-		HttpResponse response = httpclient.execute(request);
-		System.out.println("===");
 
-		List<OV_Task> list = null;
-		HttpEntity entity = response.getEntity();
-		// System.out.println(response.getStatusLine());
-		if (entity != null) {
-			// System.out.println("--Response content length: " +
-			// entity.getContentLength());
-			String s = getEntityString(entity);
-			  list = OV_Task.decode(s);
-//			try {
-//				ResourceUnit emp = objectMapper.readValue(s.getBytes(), ResourceUnit.class);
-//				System.out.println("Response = " + emp);
-//			} catch (IOException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-
-		}
-		return list;
-	}
-	 
-	
 	public String printResponse(HttpResponse response, String findKey) {
 		String findValue = null;
 		HttpEntity entity = response.getEntity();
@@ -155,29 +167,18 @@ public class RestClient {
 			String line = "";
 			sContent = line;
 			while ((line = rd.readLine()) != null) {
-				System.out.println(line);
+				// System.out.println(line);
 				sContent += line;
 			}
 		} catch (UnsupportedOperationException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("ans=" + sContent);
+		// System.out.println("ans=" + sContent);
 		return sContent;
 	}
 
-	public StringEntity encodeBody(List<OV_Task> tasks)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		StringWriter writer = new StringWriter();
-		OV_Task.encode(writer, tasks);
-		// objectMapper.writeValue(writer, list);
-		String body = writer.toString();
-		StringEntity entity = new StringEntity(body, "UTF-8");
-		entity.setContentType("application/json; charset=utf-8");
-		return entity;
-	}
-
-	public static void main(String arg[]) {
+	public static void main8(String arg[]) {
 		new RestClient().test();
 	}
 
