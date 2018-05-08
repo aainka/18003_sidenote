@@ -62,4 +62,12 @@ public class OV_Task {
 		gson.toJson(tasks, listType, writer);
 		return writer.toString();
 	}
+
+	public String dump() {
+		String s =
+		 "id: "+id +
+		 "\nsubject: "+subject ;
+		return s;
+		
+	}
 }

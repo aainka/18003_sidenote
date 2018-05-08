@@ -29,12 +29,13 @@ import org.json.simple.parser.ParseException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import platform.sidenote.DebugConsole;
 import platform.sidenote.OV_Task;
 
 public class RestClient {
 
 	private String url = "http://memo.fun25.co.kr:19803/aaa";
-	  HttpClient httpclient = new DefaultHttpClient();
+	HttpClient httpclient = new DefaultHttpClient();
 	private String session_token = null;
 	// private String url = "http://dm1401024591792.fun25.co.kr/api/V2/";
 	// private String url = "http://localhost:8080/aaa";
@@ -50,7 +51,7 @@ public class RestClient {
 	}
 
 	public void update(List<OV_Task> tasks) throws JsonGenerationException, JsonMappingException, IOException {
-		
+
 		HttpPatch request = new HttpPatch(url + "/");
 		setApiKey(request);
 		String jString = OV_Task.encodeList(tasks);
@@ -61,11 +62,11 @@ public class RestClient {
 			HttpResponse response = httpclient.execute(request);
 			printResponse(response, null);
 		}
-	 
-		
+
 	}
 
 	public List<OV_Task> list() throws ClientProtocolException, IOException {
+		System.out.println("FROM WEB");
 		HttpGet request = new HttpGet(url + "/");
 		setApiKey(request);
 		HttpResponse response = httpclient.execute(request);
@@ -76,7 +77,11 @@ public class RestClient {
 			// System.out.println("--Response content length: " +
 			// entity.getContentLength());
 			String s = getEntityString(entity);
+		//	DebugConsole.println(s);
 			list = OV_Task.decode(s);
+			for (int i = 0; i < 30; i++) {
+			//	DebugConsole.println(list.get(i).dump());
+			}
 			// try {
 			// ResourceUnit emp = objectMapper.readValue(s.getBytes(), ResourceUnit.class);
 			// System.out.println("Response = " + emp);
@@ -123,7 +128,7 @@ public class RestClient {
 
 	public int insert(List<OV_Task> tasks) throws JsonGenerationException, JsonMappingException, IOException {
 		HttpPost request = new HttpPost(url + "/");
-	//	request.setEntity(encodeBody(tasks));
+		// request.setEntity(encodeBody(tasks));
 		HttpResponse response = httpclient.execute(request);
 		HttpEntity entity = response.getEntity();
 		if (entity != null) {
@@ -163,7 +168,7 @@ public class RestClient {
 		// entity.getContentLength());
 		BufferedReader rd;
 		try {
-			rd = new BufferedReader(new InputStreamReader(entity.getContent()));
+			rd = new BufferedReader(new InputStreamReader(entity.getContent(), "UTF-8"));
 			String line = "";
 			sContent = line;
 			while ((line = rd.readLine()) != null) {

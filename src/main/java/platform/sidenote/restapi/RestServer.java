@@ -75,20 +75,10 @@ public class RestServer {
 			if (t.getRequestMethod().toString().equals("GET")) {
 				try {
 					debug("Recieve GET [OK----------------------]");
-
 					List<OV_Task> tasks = TaskTreeModel.loadFile();
-					// file --> list
-					// FileInputStream fis = new FileInputStream(file);
-					// InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-					// BufferedReader br = new BufferedReader(isr);
-					// JsonReader reader = new JsonReader(br);
-					// List<OV_Task> tasks = gson.fromJson(reader, listType);
-
-					// list --> webEntity
 					String response = OV_Task.encodeList(tasks);
 					{
 						t.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
-						// String response = writer.toString();
 						t.sendResponseHeaders(200, response.getBytes().length);
 						OutputStream os = t.getResponseBody();
 						os.write(response.getBytes());

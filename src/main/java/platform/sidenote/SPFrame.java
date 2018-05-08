@@ -35,13 +35,18 @@ public class SPFrame extends JFrame {
 		this.setResizable(true);
 
 		build(this.getContentPane());
-		this.setTitle("즉시,반드시,끝까지,5Y,80:20,마감");
+		this.setTitle("즉시2,반드시,끝까지,5Y,80:20,마감");
 
 		// JEditorPane pan = new JEditorPane();
 		// pan.setFont(new Font("���� ���", 0, 15));
 		// pan.setText(new SPExcelLoader().test2());
 
 		this.setVisible(true);
+
+//		new DebugConsole();
+//		for (int i = 0; i < 100; i++) {
+//			DebugConsole.println("xxxx");
+//		}
 	}
 
 	public void build(Container container) {
@@ -58,8 +63,8 @@ public class SPFrame extends JFrame {
 	private JComponent initShortCutOnTop() {
 		TopShortCut menubar = new TopShortCut();
 		menubar.add("SAVE");
-		menubar.add("LOAD");
-		menubar.add("XXX");
+		menubar.add("PRINT");
+		menubar.add("ETC");
 		menubar.add("NOTE");
 		menubar.addActionListener(controller);
 		return menubar;
