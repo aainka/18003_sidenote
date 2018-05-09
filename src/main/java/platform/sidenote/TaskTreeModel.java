@@ -181,33 +181,71 @@ public class TaskTreeModel extends DataTreeModel {
 		return -1;
 	}
 
-	// @Override
-	// public DefaultMutableTreeNode createNode(DefaultMutableTreeNode parent,
-	// Object value) {
-
-	// }
+	@Override
+	public DefaultMutableTreeNode createNode(DefaultMutableTreeNode parent, Object value) {
+		OV_Task task = new OV_Task();
+		task.id = seqNumber++;
+		task.subject = (String) value;
+		if (parent.getUserObject() instanceof OV_Task) {
+			OV_Task pTask = (OV_Task) parent.getUserObject();
+			task.parent_id = pTask.id;
+		}
+		DefaultMutableTreeNode newChild = new DefaultMutableTreeNode(task);
+		parent.add(newChild);
+		return newChild;
+	}
+	
+	// Clip Board Copy
 
 	@Override
 	public DefaultMutableTreeNode copy(DefaultMutableTreeNode node) {
 		OV_Task task = (OV_Task) node.getUserObject();
 		OV_Task nTask = task.copy();
+	
 		DefaultMutableTreeNode node2 = new DefaultMutableTreeNode();
-		node2.setUserObject(nTask);
+		node2.setUserObject("[" + encodeTreeNode(node) + "]"); // User Object change to String for TreeInfo;
+		// node2.setUserObject(nTask);
 		return node2;
 	}
-
-	@Override
-	public DefaultMutableTreeNode createNode(DefaultMutableTreeNode parent, Object value) {
-		  OV_Task task = new OV_Task();
-		  task.id = seqNumber++;
-		  task.subject = (String) value;
-		  if (parent.getUserObject() instanceof OV_Task) {
-		  OV_Task pTask = (OV_Task) parent.getUserObject();
-		  task.parent_id = pTask.id;
-		  }
-		  DefaultMutableTreeNode newChild = new DefaultMutableTreeNode(task);
-		  parent.add(newChild);
-		  return newChild;
+	
+	public String encodeTreeNode(DefaultMutableTreeNode node) {
+		OV_Task task = (OV_Task) node.getUserObject();
+		String s = gson.toJson(task, OV_Task.class);
+		for (int i = 0; i < node.getChildCount(); i++) {
+			DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(i);
+			System.out.println("encode count=" + node.getChildCount());
+			s += "," + encodeTreeNode(child);
+		}
+		return new String(s);
 	}
 
+	public DefaultMutableTreeNode decodeTreeNode(String jString) {
+		HashMap<Integer, DefaultMutableTreeNode> map = new HashMap<Integer, DefaultMutableTreeNode>();
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		Type listType = new TypeToken<List<OV_Task>>() {
+		}.getType();
+		List<OV_Task> list = gson.fromJson(jString, listType);
+		System.out.println("decodeNode. =" + list.size());
+		OV_Task task = list.get(0);
+		DefaultMutableTreeNode top = new DefaultMutableTreeNode(list.get(0));
+		if (task.id > 0) {
+			map.put(task.id, top);
+		}
+		for (int i = 1; i < list.size(); i++) {
+			task = list.get(i);
+			DefaultMutableTreeNode node = new DefaultMutableTreeNode(task);
+			if (task.id > 0) {
+				map.put(task.id, node);
+			}
+			if (task.parent_id > 0) {
+				DefaultMutableTreeNode pNode = map.get(task.parent_id);
+				if (pNode != null) {
+					pNode.add(node);
+					continue;
+				}
+			}
+			top.add(node);
+		}
+		return top;
+	}
 }

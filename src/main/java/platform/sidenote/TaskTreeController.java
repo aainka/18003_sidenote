@@ -66,7 +66,6 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 					System.out.println("Enter: " + textNew.getText());
 					quickCreateNode(textNew.getText());
 					textNew.setText("");
-
 				}
 			}
 		});
@@ -143,8 +142,12 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 	public void valueChanged(TreeSelectionEvent e) {
 		SPTree tree = (SPTree) e.getSource();
 		DefaultMutableTreeNode toNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-		selectionChange(fromNode, toNode);
+		changeSelection(fromNode, toNode);
+		// treeModel.reload(fromNode);
 		fromNode = toNode;
+
+		// treeModel.reload(toNode);
+		// treeModel.nodeStructureChanged(toNode);
 	}
 
 	// **************************************************************
@@ -176,19 +179,38 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 		if (fromNode != null && (fromNode != treeModel.getRoot())) {
 			if (fromNode.getUserObject().getClass() == OV_Task.class) {
 				OV_Task task = (OV_Task) fromNode.getUserObject();
-				task.note = noteEditor.getText();
+				String s = noteEditor.getText();
+				{
+					int pos = s.indexOf("\n");
+					if (pos == -1) {
+						task.subject = s;
+						task.note = null;
+					} else {
+						task.subject = s.substring(0, pos);
+						task.note = s.substring(pos + 1, s.length());
+						if (task.note.length() == 0) {
+							task.note = null;
+						}
+					}
+
+				}
 				System.out.println("UPDATE note --> node");
 			}
 		}
+		treeModel.reload(fromNode);
 	}
 
-	public void selectionChange(DefaultMutableTreeNode fromNode, DefaultMutableTreeNode toNode) {
+	public void changeSelection(DefaultMutableTreeNode fromNode, DefaultMutableTreeNode toNode) {
 		System.out.println("selectionChanged");
 		updateNoteToNode();
 		if (toNode != null && toNode != treeModel.getRoot()) {
 			if (toNode.getUserObject().getClass() == OV_Task.class) {
 				OV_Task task = (OV_Task) toNode.getUserObject();
-				noteEditor.setText(task.note);
+				if (task.note == null) {
+					task.note = new String("");
+				}
+				String s = task.subject + "\n" + task.note;
+				noteEditor.setText(s);
 			}
 		} else {
 			noteEditor.setText("Do not edit note for root");

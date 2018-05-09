@@ -14,12 +14,14 @@ public abstract class DataTreeModel extends DefaultTreeModel  {
 	public abstract int loadNodes();
 	public abstract DefaultMutableTreeNode createNode(DefaultMutableTreeNode parent, Object value);
 	public abstract DefaultMutableTreeNode copy(DefaultMutableTreeNode node) ;
+	public abstract DefaultMutableTreeNode decodeTreeNode(String userObject);
  
 
 	public DataTreeModel() {
 		super(root);
 		// TODO Auto-generated constructor stub
 	}
+	 
 
  
 	

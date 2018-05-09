@@ -91,7 +91,7 @@ class TreeTransferHandler99 extends TransferHandler {
 			List<DefaultMutableTreeNode> toRemove = new ArrayList<DefaultMutableTreeNode>();
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) paths[0].getLastPathComponent();
 			DefaultMutableTreeNode copy = treeModel.copy(node);
-			copy.setUserObject("[" + encodeTreeNode(node) + "]");
+		
 			copies.add(copy);
 			toRemove.add(node);
 			for (int i = 1; i < paths.length; i++) {
@@ -100,7 +100,7 @@ class TreeTransferHandler99 extends TransferHandler {
 				if (next.getLevel() < node.getLevel()) {
 					break;
 				} else if (next.getLevel() > node.getLevel()) { // child node
-					copy.add(treeModel.deepCopy(next));
+					copy.add(treeModel.copy(next));
 					// node already contains child
 				} else { // sibling
 					copies.add(treeModel.copy(next));
@@ -116,46 +116,9 @@ class TreeTransferHandler99 extends TransferHandler {
 		return null;
 	}
 
-	public String encodeTreeNode(DefaultMutableTreeNode node) {
-		OV_Task task = (OV_Task) node.getUserObject();
-		String s = gson.toJson(task, OV_Task.class);
-		for (int i = 0; i < node.getChildCount(); i++) {
-			DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(i);
-			System.out.println("encode count=" + node.getChildCount());
-			s += "," + encodeTreeNode(child);
-		}
-		return new String(s);
-	}
+	
 
-	public DefaultMutableTreeNode decodeTreeNode(String jString) {
-		HashMap<Integer, DefaultMutableTreeNode> map = new HashMap<Integer, DefaultMutableTreeNode>();
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		Type listType = new TypeToken<List<OV_Task>>() {
-		}.getType();
-		List<OV_Task> list = gson.fromJson(jString, listType);
-		System.out.println("decodeNode. =" + list.size());
-		OV_Task task = list.get(0);
-		DefaultMutableTreeNode top = new DefaultMutableTreeNode(list.get(0));
-		if (task.id > 0) {
-			map.put(task.id, top);
-		}
-		for (int i = 1; i < list.size(); i++) {
-			task = list.get(i);
-			DefaultMutableTreeNode node = new DefaultMutableTreeNode(task);
-			if (task.id > 0) {
-				map.put(task.id, node);
-			}
-			if (task.parent_id > 0) {
-				DefaultMutableTreeNode pNode = map.get(task.parent_id);
-				if (pNode != null) {
-					pNode.add(node);
-					continue;
-				}
-			}
-			top.add(node);
-		}
-		return top;
-	}
+	
 
 	/** Defensive copy used in createTransferable. */
 	private DefaultMutableTreeNode copy99(DefaultMutableTreeNode node) {
@@ -217,6 +180,7 @@ class TreeTransferHandler99 extends TransferHandler {
 		TreePath dest = dl.getPath();
 		DefaultMutableTreeNode parent = (DefaultMutableTreeNode) dest.getLastPathComponent();
 		JTree tree = (JTree) support.getComponent();
+		DataTreeModel treeModel = (DataTreeModel) tree.getModel();
 		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
 		// Configure for drop mode.
 		int index = childIndex; // DropMode.INSERT
@@ -227,7 +191,7 @@ class TreeTransferHandler99 extends TransferHandler {
 		// Add data to model.
 		for (int i = 0; i < nodes.length; i++) {
 			// model.insertNodeInto(nodes[i], parent, index++);
-			model.insertNodeInto(decodeTreeNode((String) nodes[i].getUserObject()), parent, index++);
+			model.insertNodeInto(treeModel.decodeTreeNode((String) nodes[i].getUserObject()), parent, index++);
 		}
 		return true;
 	}
