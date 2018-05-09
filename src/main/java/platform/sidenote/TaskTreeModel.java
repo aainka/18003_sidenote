@@ -184,16 +184,7 @@ public class TaskTreeModel extends DataTreeModel {
 	// @Override
 	// public DefaultMutableTreeNode createNode(DefaultMutableTreeNode parent,
 	// Object value) {
-	// OV_Task task = new OV_Task();
-	// task.id = seqNumber++;
-	// task.subject = (String) value;
-	// if (parent.getUserObject() instanceof OV_Task) {
-	// OV_Task pTask = (OV_Task) parent.getUserObject();
-	// task.parent_id = pTask.id;
-	// }
-	// DefaultMutableTreeNode newChild = new DefaultMutableTreeNode(task);
-	// parent.add(newChild);
-	// return newChild;
+
 	// }
 
 	@Override
@@ -207,8 +198,16 @@ public class TaskTreeModel extends DataTreeModel {
 
 	@Override
 	public DefaultMutableTreeNode createNode(DefaultMutableTreeNode parent, Object value) {
-		// TODO Auto-generated method stub
-		return null;
+		  OV_Task task = new OV_Task();
+		  task.id = seqNumber++;
+		  task.subject = (String) value;
+		  if (parent.getUserObject() instanceof OV_Task) {
+		  OV_Task pTask = (OV_Task) parent.getUserObject();
+		  task.parent_id = pTask.id;
+		  }
+		  DefaultMutableTreeNode newChild = new DefaultMutableTreeNode(task);
+		  parent.add(newChild);
+		  return newChild;
 	}
 
 }
