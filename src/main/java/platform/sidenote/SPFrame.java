@@ -54,7 +54,6 @@ public class SPFrame extends JFrame {
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("aaa", controller.buildUi());
 		container.add(BorderLayout.CENTER, tabbedPane);
-
 		container.add(BorderLayout.NORTH, initShortCutOnTop());
 	}
 
@@ -62,11 +61,12 @@ public class SPFrame extends JFrame {
 
 	private JComponent initShortCutOnTop() {
 		TopShortCut menubar = new TopShortCut();
-		menubar.add("SAVE");
-		menubar.add("PRINT");
-		menubar.add("ETC");
-		menubar.add("NOTE");
+		menubar.add2("SAVE");
+		menubar.add2("PRINT");
+		menubar.add2("ETC");
+		menubar.add2("NOTE");
 		menubar.addActionListener(controller);
+		controller.setButtonMenu(menubar);
 		return menubar;
 	}
 

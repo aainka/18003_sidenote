@@ -33,6 +33,7 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 	private JTextField textNew = new JTextField();
 	private JTextPane noteEditor = new JTextPane();
 	private DefaultMutableTreeNode fromNode = null;
+	Debug logger = Debug.getLogger(this.getClass());
 
 	public TaskTreeController() {
 		Document blank = new DefaultStyledDocument();
@@ -50,9 +51,11 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 		noteEditor.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				valueChanged();
+				// coloring();
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					updateNoteToNode();
-					// coloring();
+					
 				}
 			}
 		});
@@ -66,6 +69,7 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 					System.out.println("Enter: " + textNew.getText());
 					quickCreateNode(textNew.getText());
 					textNew.setText("");
+					valueChanged();
 				}
 			}
 		});
@@ -149,6 +153,12 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 		// treeModel.reload(toNode);
 		// treeModel.nodeStructureChanged(toNode);
 	}
+	
+	int valueChangedCount = 0;
+	public void valueChanged() {
+		valueChangedCount++;
+		buttonMenu.valueChanged();
+	}
 
 	// **************************************************************
 	// *** Action Implementation
@@ -194,14 +204,17 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 					}
 
 				}
-				System.out.println("UPDATE note --> node");
+				System.out.println("updateNoteFromNode node=" + fromNode.getParent());
 			}
 		}
-		treeModel.reload(fromNode);
+		if (fromNode != null && fromNode.getParent() != null) { // move , so isolated
+			treeModel.reload(fromNode);
+		}
 	}
 
 	public void changeSelection(DefaultMutableTreeNode fromNode, DefaultMutableTreeNode toNode) {
-		System.out.println("selectionChanged");
+		logger.info("");
+		valueChanged();
 		updateNoteToNode();
 		if (toNode != null && toNode != treeModel.getRoot()) {
 			if (toNode.getUserObject().getClass() == OV_Task.class) {
@@ -259,6 +272,7 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 	}
 
 	public boolean openNote = false;
+	private TopShortCut buttonMenu;
 
 	public void expensionFrame() {
 		if (openNote) {
@@ -287,6 +301,10 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 		// frameSize.width = screenSize.width;
 		// }
 
+	}
+
+	public void setButtonMenu(TopShortCut menubar) {
+		buttonMenu = menubar;
 	}
 
 }
