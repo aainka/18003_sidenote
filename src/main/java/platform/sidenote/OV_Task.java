@@ -23,11 +23,13 @@ public class OV_Task {
 	public String note;
 
 	public OV_Task(String string) {
-		// TODO Auto-generated constructor stub
+		long mtime= System.currentTimeMillis();
+		this.created = new Date(mtime);
 	}
 
 	public OV_Task() {
-		// TODO Auto-generated constructor stub
+		long mtime= System.currentTimeMillis();
+		this.created = new Date(mtime);
 	}
 
 	public OV_Task copy() {

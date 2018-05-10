@@ -33,7 +33,7 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 	private JTextField textNew = new JTextField();
 	private JTextPane noteEditor = new JTextPane();
 	private DefaultMutableTreeNode fromNode = null;
-	Debug logger = Debug.getLogger(this.getClass());
+//	Debug logger = Debug.getLogger(this.getClass());
 
 	public TaskTreeController() {
 		Document blank = new DefaultStyledDocument();
@@ -204,7 +204,6 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 					}
 
 				}
-				System.out.println("updateNoteFromNode node=" + fromNode.getParent());
 			}
 		}
 		if (fromNode != null && fromNode.getParent() != null) { // move , so isolated
@@ -213,7 +212,7 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 	}
 
 	public void changeSelection(DefaultMutableTreeNode fromNode, DefaultMutableTreeNode toNode) {
-		logger.info("");
+	 
 		valueChanged();
 		updateNoteToNode();
 		if (toNode != null && toNode != treeModel.getRoot()) {

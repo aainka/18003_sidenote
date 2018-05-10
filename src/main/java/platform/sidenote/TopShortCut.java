@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 public class TopShortCut extends JPanel implements MouseListener {
 
-	Debug logger = Debug.getLogger(this.getClass());
+ 	Debug logger = Debug.getLogger(this.getClass());
 	ActionListener actionListener = null;
 	TinyLabel first = new TinyLabel("value");
 	int pos = 2;
@@ -33,7 +33,7 @@ public class TopShortCut extends JPanel implements MouseListener {
 	}
 	
 	public void valueChanged() {
-		logger.info("");
+	//	logger.info("");
 		first.setBackground(Color.orange);
 		updateUI();
 		
