@@ -39,6 +39,8 @@ public class SPTree extends JTree {
 		this.setDropMode(DropMode.ON_OR_INSERT);
 		this.setTransferHandler(new TreeTransferHandler99());
 		expandTree(this);
+		SPPopup pp = new SPPopup(this);
+		pp.addMethod("Collapse", this, "collapseAll");
 	}
 
 	private void expandTree(JTree tree) {
@@ -50,6 +52,18 @@ public class SPTree extends JTree {
 				continue;
 			int row = tree.getRowForPath(new TreePath(node.getPath()));
 			tree.expandRow(row);
+		}
+	}
+	public void collapseAll(SPTree tree) {
+		System.out.println("------------ collapseAll");
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+		Enumeration e = root.breadthFirstEnumeration();
+		while (e.hasMoreElements()) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
+			if (node.isLeaf())
+				continue;
+			int row = tree.getRowForPath(new TreePath(node.getPath()));
+			tree.collapseRow(row);
 		}
 	}
 }
