@@ -23,6 +23,8 @@ public class TopShortCut extends JPanel implements MouseListener {
 		this.setPreferredSize(new Dimension(50, 20)); // x.y
 		this.addMouseListener(this);
 		this.setLayout(null);
+		FlowLayout flowlayout = new FlowLayout();
+		flowlayout.setAlignment(FlowLayout.LEFT);
 		this.setLayout(new FlowLayout());
 		this.add(first);
 	}

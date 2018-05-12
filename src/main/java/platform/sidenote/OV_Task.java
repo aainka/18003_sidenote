@@ -5,11 +5,16 @@ import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JTextField;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-public class OV_Task {
+/* it is json recode define so do not extends GUI Component
+ * 
+ */
+public class OV_Task   {
 	int id;
 	public String subject;
 	Date created;
@@ -23,12 +28,12 @@ public class OV_Task {
 	public String note;
 
 	public OV_Task(String string) {
-		long mtime= System.currentTimeMillis();
+		long mtime = System.currentTimeMillis();
 		this.created = new Date(mtime);
 	}
 
 	public OV_Task() {
-		long mtime= System.currentTimeMillis();
+		long mtime = System.currentTimeMillis();
 		this.created = new Date(mtime);
 	}
 
@@ -66,10 +71,8 @@ public class OV_Task {
 	}
 
 	public String dump() {
-		String s =
-		 "id: "+id +
-		 "\nsubject: "+subject ;
+		String s = "id: " + id + "\nsubject: " + subject;
 		return s;
-		
+
 	}
 }

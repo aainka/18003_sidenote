@@ -4,10 +4,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.DropMode;
@@ -16,17 +14,20 @@ import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 public class SPTree extends JTree {
 
+	private Debug logger = Debug.getLogger(this.getClass());
+
 	public SPTree(DataTreeModel treeModel) {
 		this.setModel(treeModel);
+		 this.setCellRenderer(new TaskTreeCellRenderer());
 		init();
 	}
 
@@ -39,8 +40,8 @@ public class SPTree extends JTree {
 		this.setDropMode(DropMode.ON_OR_INSERT);
 		this.setTransferHandler(new TreeTransferHandler99());
 		expandTree(this);
-		SPPopup pp = new SPPopup(this);
-		pp.addMethod("Collapse", this, "collapseAll");
+		OT_Popup pp = new OT_Popup(this);
+		pp.addMethodCall("Collapse", this, "collapseAll");
 	}
 
 	private void expandTree(JTree tree) {
@@ -54,18 +55,23 @@ public class SPTree extends JTree {
 			tree.expandRow(row);
 		}
 	}
+
 	public void collapseAll(SPTree tree) {
-		System.out.println("------------ collapseAll");
-		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
-		Enumeration e = root.breadthFirstEnumeration();
+		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+		TreePath treePath = tree.getSelectionPath();
+		if (treePath == null) {
+			return;
+		}
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+		Enumeration e = node.children();
 		while (e.hasMoreElements()) {
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
-			if (node.isLeaf())
-				continue;
-			int row = tree.getRowForPath(new TreePath(node.getPath()));
-			tree.collapseRow(row);
+			DefaultMutableTreeNode child = (DefaultMutableTreeNode) e.nextElement();
+			TreeNode[] a = child.getPath();
+			TreePath path = new TreePath(child.getPath());
+			tree.collapsePath(path);
 		}
 	}
+
 }
 
 class TreeTransferHandler99 extends TransferHandler {
@@ -105,7 +111,7 @@ class TreeTransferHandler99 extends TransferHandler {
 			List<DefaultMutableTreeNode> toRemove = new ArrayList<DefaultMutableTreeNode>();
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) paths[0].getLastPathComponent();
 			DefaultMutableTreeNode copy = treeModel.copy(node);
-		
+
 			copies.add(copy);
 			toRemove.add(node);
 			for (int i = 1; i < paths.length; i++) {
@@ -128,18 +134,6 @@ class TreeTransferHandler99 extends TransferHandler {
 			return new NodesTransfer22(nodes); // ----->
 		}
 		return null;
-	}
-
-	
-
-	
-
-	/** Defensive copy used in createTransferable. */
-	private DefaultMutableTreeNode copy99(DefaultMutableTreeNode node) {
-		DefaultMutableTreeNode node1 = new DefaultMutableTreeNode(node);
-		DefaultMutableTreeNode node2 = new DefaultMutableTreeNode("king");
-		node1.add(node2);
-		return node1;
 	}
 
 	// only check drop location
