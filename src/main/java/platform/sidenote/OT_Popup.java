@@ -46,22 +46,29 @@ public class OT_Popup extends JPopupMenu implements ActionListener {
 		init(tree);
 	}
 
+	public OT_Popup() {
+		this.setVisible(true);
+	}
+
 	public void init(JComponent source) {
 		source.add(this); // tree attach
-		source.addMouseListener(new PopupTriggerListener());
+		//source.addMouseListener(new PopupTriggerListener());
 		this.setVisible(true);
 	}
 
 	void addMethodCall(String name, Object target, String sMethod) {
+		
 		this.target = target;
+		JMenuItem menuItem = new JMenuItem(name);
+		menuItem.addActionListener(this);
+		this.add(menuItem);
+		
 		Class[] parameterTypes = new Class[] { target.getClass() };
 		Method method;
 		try {
-			method = target.getClass().getMethod(sMethod, parameterTypes);
+			method = target.getClass().getMethod("_"+sMethod, parameterTypes);
 			if (method != null) {
-				JMenuItem menuItem = new JMenuItem(name);
-				menuItem.addActionListener(this);
-				this.add(menuItem);
+			
 				map.put(name, method);
 			}
 		} catch (NoSuchMethodException | SecurityException e) {
@@ -88,18 +95,18 @@ public class OT_Popup extends JPopupMenu implements ActionListener {
 		}
 	}
 
-	class PopupTriggerListener extends MouseAdapter {
-		public void mousePressed(MouseEvent ev) {
-			if (ev.isPopupTrigger()) {
-				popupMenu.show(ev.getComponent(), ev.getX(), ev.getY());
-			}
-		}
-
-		public void mouseReleased(MouseEvent ev) {
-			if (ev.isPopupTrigger()) {
-				popupMenu.show(ev.getComponent(), ev.getX(), ev.getY());
-			}
-		}
-	}
+//	class PopupTriggerListener extends MouseAdapter {
+//		public void mousePressed(MouseEvent ev) {
+//			if (ev.isPopupTrigger()) {
+//				popupMenu.show(ev.getComponent(), ev.getX(), ev.getY());
+//			}
+//		}
+//
+//		public void mouseReleased(MouseEvent ev) {
+//			if (ev.isPopupTrigger()) {
+//				popupMenu.show(ev.getComponent(), ev.getX(), ev.getY());
+//			}
+//		}
+//	}
 
 }

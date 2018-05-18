@@ -5,7 +5,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 public abstract class DataTreeModel extends DefaultTreeModel {
 
-	protected static DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
+	protected static DefaultMutableTreeNode root = new DefaultMutableTreeNode("SYSTEM");
 
 	public abstract int saveNodes();
 

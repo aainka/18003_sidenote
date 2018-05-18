@@ -27,7 +27,6 @@ public class SPTree extends JTree {
 
 	public SPTree(DataTreeModel treeModel) {
 		this.setModel(treeModel);
-		 this.setCellRenderer(new TaskTreeCellRenderer());
 		init();
 	}
 
@@ -40,8 +39,14 @@ public class SPTree extends JTree {
 		this.setDropMode(DropMode.ON_OR_INSERT);
 		this.setTransferHandler(new TreeTransferHandler99());
 		expandTree(this);
+
+		this.setCellRenderer(new TaskTreeCellRenderer());
+
 		OT_Popup pp = new OT_Popup(this);
 		pp.addMethodCall("Collapse", this, "collapseAll");
+		pp.addMethodCall("Priority", this, "setPriority");
+		pp.addMethodCall("Title", this, "setTitle");
+		this.setComponentPopupMenu(pp);
 	}
 
 	private void expandTree(JTree tree) {
@@ -56,13 +61,25 @@ public class SPTree extends JTree {
 		}
 	}
 
-	public void collapseAll(SPTree tree) {
+	private OV_Task getTask(SPTree tree) {
+		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+		TreePath treePath = tree.getSelectionPath();
+		if (treePath == null) {
+			return null;
+		}
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+		OV_Task task = (OV_Task) node.getUserObject();
+		return task;
+	}
+
+	public void _collapseAll(SPTree tree) {
 		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
 		TreePath treePath = tree.getSelectionPath();
 		if (treePath == null) {
 			return;
 		}
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+
 		Enumeration e = node.children();
 		while (e.hasMoreElements()) {
 			DefaultMutableTreeNode child = (DefaultMutableTreeNode) e.nextElement();
@@ -70,6 +87,20 @@ public class SPTree extends JTree {
 			TreePath path = new TreePath(child.getPath());
 			tree.collapsePath(path);
 		}
+	}
+
+	public void _setPriority(SPTree tree) {
+		OV_Task task = getTask(tree);
+		if (task.priority > 0) {
+			task.priority = 0;
+		} else {
+			task.priority = 1;
+		}
+	}
+
+	public void _setTitle(SPTree tree) {
+		OV_Task task = getTask(tree);
+		task.priority = 6;
 	}
 
 }

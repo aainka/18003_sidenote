@@ -3,45 +3,57 @@ package platform.sidenote;
 import java.awt.Color;
 import java.awt.Component;
 
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
-public class TaskTreeCellRenderer implements TreeCellRenderer {
+public class TaskTreeCellRenderer extends DefaultTreeCellRenderer {
 
 	Debug logger = Debug.getLogger(this.getClass());
-	JLabel tf = new JLabel();
+	OT_Popup popup = new OT_Popup();
+	private Color colorSelected = new Color(184, 207, 229);
+	private Color colorTitle = new Color(128, 255, 128);
+	private Color colorPriority = new Color(253,240,225);
+
+	public TaskTreeCellRenderer() {
+		this.setOpaque(true);
+		// popup.addMethodCall("m1", null, null);
+		// this.setComponentPopupMenu(popup);
+	}
 
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
 			boolean leaf, int row, boolean hasFocus) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-		if ( (row%2) ==0 ) {
-			tf.setBackground(Color.GRAY);
-		}else {
-			tf.setBackground(Color.YELLOW);
+		Component comp = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+
+		if (node.getUserObject().getClass() != String.class) {
+			OV_Task task = (OV_Task) node.getUserObject();
+
+			comp = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+
+			if (selected) {
+				comp.setBackground(colorSelected);
+			} else {
+				if (task.priority == 0) {
+					comp.setBackground(Color.WHITE);
+				} else {
+					if (task.priority > 5) {
+						comp.setBackground(colorTitle);
+					} else {
+						comp.setBackground(colorPriority);
+					}
+				}
+			}
+			
 		}
-		tf.setText(node.getUserObject().toString());
-		return tf;
+		// if ((row % 2) == 0) {
+		// comp.setBackground(Color.RED);
+		// } else {
+		// comp.setBackground(Color.YELLOW);
+		//
+		// }
+		return comp;
 	}
 
-	// setTreeCellRenderer(new TreeCellRenderer() {
-	// private final TreeCellRenderer myBaseRenderer = new
-	// HighlightableCellRenderer();
-	// public Component getTreeCellRendererComponent(JTree tree1,
-	// Object value,
-	// boolean selected,
-	// boolean expanded,
-	// boolean leaf,
-	// int row,
-	// boolean hasFocus) {
-	// JComponent result =
-	// (JComponent)myBaseRenderer.getTreeCellRendererComponent(tree1, value,
-	// selected, expanded, leaf, row, hasFocus);
-	// result.setOpaque(!selected);
-	// return result;
-	// }
-	// });
 }

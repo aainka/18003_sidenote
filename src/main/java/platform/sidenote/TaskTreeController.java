@@ -33,7 +33,7 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 	private JTextField textNew = new JTextField();
 	private JTextPane noteEditor = new JTextPane();
 	private DefaultMutableTreeNode fromNode = null;
-//	Debug logger = Debug.getLogger(this.getClass());
+	// Debug logger = Debug.getLogger(this.getClass());
 
 	public TaskTreeController() {
 		Document blank = new DefaultStyledDocument();
@@ -55,7 +55,7 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 				// coloring();
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					updateNoteToNode();
-					
+
 				}
 			}
 		});
@@ -132,7 +132,7 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 		// TODO Auto-generated method stub
 		String command = arg0.getActionCommand();
 		if (command.equals("SAVE")) {
-			save();
+			_save();
 		}
 		if (command.equals("PRINT")) {
 			printItemList();
@@ -153,8 +153,9 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 		// treeModel.reload(toNode);
 		// treeModel.nodeStructureChanged(toNode);
 	}
-	
+
 	int valueChangedCount = 0;
+
 	public void valueChanged() {
 		valueChangedCount++;
 		buttonMenu.valueChanged();
@@ -212,7 +213,7 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 	}
 
 	public void changeSelection(DefaultMutableTreeNode fromNode, DefaultMutableTreeNode toNode) {
-	 
+
 		valueChanged();
 		updateNoteToNode();
 		if (toNode != null && toNode != treeModel.getRoot()) {
@@ -229,14 +230,14 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 		}
 	}
 
-	public void save() {
+	public void _save() {
 		updateNoteToNode();
 		int count = treeModel.saveNodes();
 		JOptionPane.showMessageDialog(null, "" + count + " recodes are saved");
 	}
 
 	public void printItemList() {
-		JOptionPane.showMessageDialog(null, "��� ��±�� Ȱ��ȭ");
+		JOptionPane.showMessageDialog(null, "Print");
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
 		printItemSub(0, "", root);
 		// Enumeration e = root.breadthFirstEnumeration();
@@ -266,7 +267,7 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 		int Response = JOptionPane.showConfirmDialog(null, "Will do you save data ? ");
 		if (Response == JOptionPane.YES_OPTION) {
 			// JOptionPane.showMessageDialog(null, "YEST");
-			save();
+			_save();
 		}
 	}
 

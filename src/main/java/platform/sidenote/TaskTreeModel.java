@@ -41,6 +41,7 @@ public class TaskTreeModel extends DataTreeModel {
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	public TaskTreeModel() {
+		System.out.println("LOAD TREE ");
 		loadNodes();
 	}
 
@@ -58,7 +59,7 @@ public class TaskTreeModel extends DataTreeModel {
 	// *** SAVE
 	// ************************************************************
 
-	public static int saveFile(List<OV_Task> list) {
+	public int saveFile(List<OV_Task> list) {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		Type listType = new TypeToken<List<OV_Task>>() {
 		}.getType();
@@ -194,20 +195,20 @@ public class TaskTreeModel extends DataTreeModel {
 		parent.add(newChild);
 		return newChild;
 	}
-	
+
 	// Clip Board Copy
 
 	@Override
 	public DefaultMutableTreeNode copy(DefaultMutableTreeNode node) {
 		OV_Task task = (OV_Task) node.getUserObject();
 		OV_Task nTask = task.copy();
-	
+
 		DefaultMutableTreeNode node2 = new DefaultMutableTreeNode();
 		node2.setUserObject("[" + encodeTreeNode(node) + "]"); // User Object change to String for TreeInfo;
 		// node2.setUserObject(nTask);
 		return node2;
 	}
-	
+
 	public String encodeTreeNode(DefaultMutableTreeNode node) {
 		OV_Task task = (OV_Task) node.getUserObject();
 		String s = gson.toJson(task, OV_Task.class);

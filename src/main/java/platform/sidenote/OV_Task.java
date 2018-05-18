@@ -24,7 +24,7 @@ public class OV_Task   {
 	String assigned;
 	int parent_id;
 	public String category;
-	public String priority;
+	public int priority;
 	public String note;
 
 	public OV_Task(String string) {
