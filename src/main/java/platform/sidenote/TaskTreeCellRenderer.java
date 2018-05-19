@@ -13,20 +13,21 @@ public class TaskTreeCellRenderer extends DefaultTreeCellRenderer {
 	OT_Popup popup = new OT_Popup();
 	private Color colorSelected = new Color(184, 207, 229);
 	private Color colorTitle = new Color(128, 255, 128);
-	private Color colorPriority = new Color(253,240,225);
+	private Color colorPriority = new Color(253, 240, 225);
 
 	public TaskTreeCellRenderer() {
 		this.setOpaque(true);
-		// popup.addMethodCall("m1", null, null);
-		// this.setComponentPopupMenu(popup);
 	}
 
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
 			boolean leaf, int row, boolean hasFocus) {
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+
 		Component comp = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
+		comp.setBackground(Color.WHITE); // root node
+
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 		if (node.getUserObject().getClass() != String.class) {
 			OV_Task task = (OV_Task) node.getUserObject();
 
@@ -45,14 +46,7 @@ public class TaskTreeCellRenderer extends DefaultTreeCellRenderer {
 					}
 				}
 			}
-			
 		}
-		// if ((row % 2) == 0) {
-		// comp.setBackground(Color.RED);
-		// } else {
-		// comp.setBackground(Color.YELLOW);
-		//
-		// }
 		return comp;
 	}
 

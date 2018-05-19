@@ -1,5 +1,6 @@
 package platform.sidenote;
 
+import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -38,7 +39,7 @@ public class SPTree extends JTree {
 
 		this.setDropMode(DropMode.ON_OR_INSERT);
 		this.setTransferHandler(new TreeTransferHandler99());
-		expandTree(this);
+		// expandTree(this);
 
 		this.setCellRenderer(new TaskTreeCellRenderer());
 
@@ -61,20 +62,32 @@ public class SPTree extends JTree {
 		}
 	}
 
-	private OV_Task getTask(SPTree tree) {
-		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-		TreePath treePath = tree.getSelectionPath();
-		if (treePath == null) {
-			return null;
-		}
+	private OV_Task getTaskAt(Point p) {
+		TreePath treePath = this.getClosestPathForLocation(p.x, p.y);
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) treePath.getLastPathComponent();
 		OV_Task task = (OV_Task) node.getUserObject();
 		return task;
 	}
 
-	public void _collapseAll(SPTree tree) {
+	private OV_Task getTask(SPTree tree) {
+		Point p = tree.getMousePosition();
+
 		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
 		TreePath treePath = tree.getSelectionPath();
+		if (treePath == null) {
+			return null;
+		}
+
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+		OV_Task task = (OV_Task) node.getUserObject();
+		return task;
+	}
+
+	public void _collapseAll(SPTree tree, Point poped) {
+		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+		// TreePath treePath = tree.getSelectionPath();
+		TreePath treePath = this.getClosestPathForLocation(poped.x, poped.y);
+
 		if (treePath == null) {
 			return;
 		}
@@ -89,17 +102,20 @@ public class SPTree extends JTree {
 		}
 	}
 
-	public void _setPriority(SPTree tree) {
-		OV_Task task = getTask(tree);
+	public void _setPriority(SPTree tree, Point poped) {
+		// Point p = tree.getMousePosition();
+		OV_Task task = getTaskAt(poped);
 		if (task.priority > 0) {
 			task.priority = 0;
 		} else {
 			task.priority = 1;
 		}
+		tree.updateUI();
 	}
 
-	public void _setTitle(SPTree tree) {
-		OV_Task task = getTask(tree);
+	public void _setTitle(SPTree tree, Point poped) {
+		// OV_Task task = getTask(tree);
+		OV_Task task = getTaskAt(poped);
 		task.priority = 6;
 	}
 
@@ -169,7 +185,6 @@ class TreeTransferHandler99 extends TransferHandler {
 
 	// only check drop location
 	public boolean canImport(TransferHandler.TransferSupport support) {
-		System.out.println("camImport-0");
 		if (!support.isDrop()) {
 			return false;
 		}
