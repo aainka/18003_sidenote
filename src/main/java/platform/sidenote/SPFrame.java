@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -43,10 +44,10 @@ public class SPFrame extends JFrame {
 
 		this.setVisible(true);
 
-//		new DebugConsole();
-//		for (int i = 0; i < 100; i++) {
-//			DebugConsole.println("xxxx");
-//		}
+		// new DebugConsole();
+		// for (int i = 0; i < 100; i++) {
+		// DebugConsole.println("xxxx");
+		// }
 	}
 
 	public void build(Container container) {
@@ -54,21 +55,24 @@ public class SPFrame extends JFrame {
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("aaa", controller.buildUi());
 		container.add(BorderLayout.CENTER, tabbedPane);
-		container.add(BorderLayout.NORTH, initShortCutOnTop());
+		container.add(BorderLayout.NORTH, controller.getMenubar());
 	}
 
 	JFrame frame = this;
 
-	private JComponent initShortCutOnTop() {
-		TopShortCut menubar = new TopShortCut();
-		menubar.add2("SAVE");
-		menubar.add2("PRINT");
-		menubar.add2("ETC");
-		menubar.add2("NOTE");
-		menubar.addActionListener(controller);
-		controller.setButtonMenu(menubar);
-		return menubar;
-	}
+//	private JComponent initShortCutOnTop() {
+//		// String cmds = "(SAVE,save),(PRINT,print),(ETC,testETC)";
+//	
+//		// menubar.add2("SAVE");
+//		// menubar.add2("PRINT");
+//		// menubar.add2("ETC");
+//		// menubar.add2("NOTE");
+//		// menubar.add2("WR");
+//		// menubar.addActionListener(new TinyCallBackActionListener(controller));
+//		// menubar.addActionListener(controller);
+//	//	controller.setButtonMenu(menubar);
+//		return menubar;
+//	}
 
 	@Override
 	protected void processWindowEvent(WindowEvent e) {

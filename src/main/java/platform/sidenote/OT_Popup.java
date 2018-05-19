@@ -26,9 +26,9 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -36,25 +36,26 @@ import javax.swing.JPopupMenu;
 
 public class OT_Popup extends JPopupMenu implements ActionListener {
 
-	private JComponent source = null;
+	protected JComponent source = null;
 	private JPopupMenu popupMenu = this;
 	private Debug logger = Debug.getLogger(this.getClass());
 	private Object target = null;
 	private HashMap<String, Method> map = new HashMap<String, Method>();
 	private Point p = new Point();
-
-	public OT_Popup(JComponent tree) {
-		init(tree);
-	}
+	protected TinyCallBackActionListener l;
 
 	public OT_Popup() {
 		this.setVisible(true);
+		init();
 	}
 
-	public void init(JComponent source) {
-		source.add(this); // tree attach
-		// source.addMouseListener(new PopupTriggerListener());
-		this.setVisible(true);
+	protected void addMenu(List<String[]> valueList) {
+		for (String[] values : valueList) {
+			JMenuItem menuItem = new JMenuItem(values[0]);
+			menuItem.addActionListener(this);
+			this.add(menuItem);
+			System.out.println("Popup.addMenu(" + values[0]);
+		}
 	}
 
 	@Override
@@ -64,60 +65,13 @@ public class OT_Popup extends JPopupMenu implements ActionListener {
 		super.show(invoker, x, y);
 	}
 
-	void addMethodCall(String name, Object target, String sMethod) {
-
-		this.target = target;
-		JMenuItem menuItem = new JMenuItem(name);
-		menuItem.addActionListener(this);
-		this.add(menuItem);
-
-		/////////////////// source.getMousePosition();
-
-		Class[] parameterTypes = new Class[] { target.getClass(), Point.class };
-		Method method;
-		try {
-
-			method = target.getClass().getMethod("_" + sMethod, parameterTypes);
-			if (method != null) {
-
-				map.put(name, method);
-			}
-		} catch (NoSuchMethodException | SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	// ###############################################################
-	// ### PLATFORM AREA
-	// ###############################################################
-
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		System.out.println("OT_Popup:: actionPerformed() cmd=" + arg0.getActionCommand());
-		Method method = map.get(arg0.getActionCommand());
-		if (method != null) {
-			try {
-				method.invoke(target, target, p);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		l.setMousePupupPoint(p);
+		l.actionPerformed(arg0);
 	}
 
-	// class PopupTriggerListener extends MouseAdapter {
-	// public void mousePressed(MouseEvent ev) {
-	// if (ev.isPopupTrigger()) {
-	// popupMenu.show(ev.getComponent(), ev.getX(), ev.getY());
-	// }
-	// }
-	//
-	// public void mouseReleased(MouseEvent ev) {
-	// if (ev.isPopupTrigger()) {
-	// popupMenu.show(ev.getComponent(), ev.getX(), ev.getY());
-	// }
-	// }
-	// }
+	public void init() {
+	}
 
 }

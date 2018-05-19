@@ -2,12 +2,16 @@ package platform.sidenote;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -26,7 +30,7 @@ import javax.swing.text.StyledDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-public class TaskTreeController implements ActionListener, TreeSelectionListener {
+public class TaskTreeController implements TreeSelectionListener {
 
 	private DataTreeModel treeModel = new TaskTreeModel();
 	private SPTree treeView = new SPTree(treeModel);
@@ -35,9 +39,90 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 	private DefaultMutableTreeNode fromNode = null;
 	// Debug logger = Debug.getLogger(this.getClass());
 
+	TinyToolbar menubar = new TinyToolbar() {
+		@Override
+		public void init() {
+			String cmds = "(SAVE,save),(PRINT,print),(ETC,testETC)";
+			List<String[]> valueList = TinyValue.parse(cmds);
+			addMenu(valueList);
+			TinyCallBackActionListener listener = new TinyCallBackActionListener(this, valueList);
+			addActionListener(listener);
+		}
+
+		public void _save(Object source, Point p) {
+			// updateNoteToNode();
+			// int count = treeModel.saveNodes();
+			// JOptionPane.showMessageDialog(null, "" + count + " recodes are saved");
+			__save();
+		}
+
+		public void _WR(TaskTreeController controller, Point p) {
+			try {
+				Desktop.getDesktop().browse(new URI(
+						"https://ericsson.sharepoint.com/sites/Network_PM_LM/Project%20Manager%20Meeting/Forms/AllItems.aspx?id=%2Fsites%2FNetwork_PM_LM%2FProject%20Manager%20Meeting%2FvEPG-SI"));
+			} catch (IOException | URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		public void printItemList() {
+			JOptionPane.showMessageDialog(null, "Print");
+			DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
+			printItemSub(0, "", root);
+			// Enumeration e = root.breadthFirstEnumeration();
+			// while (e.hasMoreElements()) {
+			// DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
+			// if (node.isLeaf())
+			// continue;
+			//// int row = treeView.getRowForPath(new TreePath(node.getPath()));
+			//// treeView.expandRow(row);
+			// }
+		}
+
+	};
+
+	OT_Popup pp = new OT_Popup() {
+		@Override
+		public void init() {
+			String cmds = "(Collapse,collaspse),(Priority,priority),(Title,title)";
+			List<String[]> valueList = TinyValue.parse(cmds);
+			addMenu(valueList);
+			l = new TinyCallBackActionListener(this, OT_Popup.class, valueList);
+			source = treeView;
+			treeView.setComponentPopupMenu(this);
+		}
+
+		public void _setPriority(Object source, Point poped) {
+			OV_Task task = treeView.getTaskAt(poped);
+			if (task.priority > 0) {
+				task.priority = 0;
+			} else {
+				task.priority = 1;
+			}
+			treeView.updateUI();
+		}
+
+		public void _title(OT_Popup popup, Point poped) {
+			OV_Task task = treeView.getTaskAt(poped);
+			task.priority = 6;
+			treeView.updateUI();
+		}
+	};
+
 	public TaskTreeController() {
 		Document blank = new DefaultStyledDocument();
 		noteEditor.setDocument(blank);
+	}
+
+	public TinyToolbar getMenubar() {
+		return menubar;
+	}
+
+	public void __save() {
+		updateNoteToNode();
+		int count = treeModel.saveNodes();
+		JOptionPane.showMessageDialog(null, "" + count + " recodes are saved");
 	}
 
 	// **************************************************************
@@ -127,22 +212,6 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 	// **************************************************************
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// System.out.println(arg0.getActionCommand());
-		// TODO Auto-generated method stub
-		String command = arg0.getActionCommand();
-		if (command.equals("SAVE")) {
-			_save();
-		}
-		if (command.equals("PRINT")) {
-			printItemList();
-		}
-		if (command.equals("NOTE")) {
-			this.expensionFrame();
-		}
-	}
-
-	@Override
 	public void valueChanged(TreeSelectionEvent e) {
 		SPTree tree = (SPTree) e.getSource();
 		DefaultMutableTreeNode toNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
@@ -230,26 +299,6 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 		}
 	}
 
-	public void _save() {
-		updateNoteToNode();
-		int count = treeModel.saveNodes();
-		JOptionPane.showMessageDialog(null, "" + count + " recodes are saved");
-	}
-
-	public void printItemList() {
-		JOptionPane.showMessageDialog(null, "Print");
-		DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
-		printItemSub(0, "", root);
-		// Enumeration e = root.breadthFirstEnumeration();
-		// while (e.hasMoreElements()) {
-		// DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
-		// if (node.isLeaf())
-		// continue;
-		//// int row = treeView.getRowForPath(new TreePath(node.getPath()));
-		//// treeView.expandRow(row);
-		// }
-	}
-
 	String space = new String("                            ");
 
 	public void printItemSub(int level, String tag, DefaultMutableTreeNode node) {
@@ -267,12 +316,12 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 		int Response = JOptionPane.showConfirmDialog(null, "Will do you save data ? ");
 		if (Response == JOptionPane.YES_OPTION) {
 			// JOptionPane.showMessageDialog(null, "YEST");
-			_save();
+			__save();
 		}
 	}
 
 	public boolean openNote = false;
-	private TopShortCut buttonMenu;
+	private TinyToolbar buttonMenu;
 
 	public void expensionFrame() {
 		if (openNote) {
@@ -303,7 +352,7 @@ public class TaskTreeController implements ActionListener, TreeSelectionListener
 
 	}
 
-	public void setButtonMenu(TopShortCut menubar) {
+	public void setButtonMenu(TinyToolbar menubar) {
 		buttonMenu = menubar;
 	}
 

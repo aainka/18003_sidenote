@@ -43,11 +43,7 @@ public class SPTree extends JTree {
 
 		this.setCellRenderer(new TaskTreeCellRenderer());
 
-		OT_Popup pp = new OT_Popup(this);
-		pp.addMethodCall("Collapse", this, "collapseAll");
-		pp.addMethodCall("Priority", this, "setPriority");
-		pp.addMethodCall("Title", this, "setTitle");
-		this.setComponentPopupMenu(pp);
+
 	}
 
 	private void expandTree(JTree tree) {
@@ -62,7 +58,7 @@ public class SPTree extends JTree {
 		}
 	}
 
-	private OV_Task getTaskAt(Point p) {
+	public OV_Task getTaskAt(Point p) {
 		TreePath treePath = this.getClosestPathForLocation(p.x, p.y);
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) treePath.getLastPathComponent();
 		OV_Task task = (OV_Task) node.getUserObject();
@@ -102,22 +98,7 @@ public class SPTree extends JTree {
 		}
 	}
 
-	public void _setPriority(SPTree tree, Point poped) {
-		// Point p = tree.getMousePosition();
-		OV_Task task = getTaskAt(poped);
-		if (task.priority > 0) {
-			task.priority = 0;
-		} else {
-			task.priority = 1;
-		}
-		tree.updateUI();
-	}
 
-	public void _setTitle(SPTree tree, Point poped) {
-		// OV_Task task = getTask(tree);
-		OV_Task task = getTaskAt(poped);
-		task.priority = 6;
-	}
 
 }
 
