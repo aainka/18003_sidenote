@@ -13,6 +13,8 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import platform.sidenote.util.Debug;
+
 public class TinyToolbar extends JPanel implements MouseListener {
 
  	Debug logger = Debug.getLogger(this.getClass());

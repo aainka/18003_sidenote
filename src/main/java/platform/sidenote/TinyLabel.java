@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 
+import platform.sidenote.util.Debug;
+
 public class TinyLabel extends Component {
 
 	Debug logger = Debug.getLogger(this.getClass());

@@ -9,8 +9,8 @@ import java.util.List;
 
 public class TinyCallBackActionListener implements ActionListener {
 
-	Object target = null;
-	List<String[]> valueList = null;
+	private Object target = null;
+	private List<String[]> valueList = null;
 	private Class<?> targetClass;
 	private Point mousePupupPoint;
 
@@ -20,7 +20,6 @@ public class TinyCallBackActionListener implements ActionListener {
 	public TinyCallBackActionListener(Object target, List<String[]> valueList) {
 		this.target = target;
 		this.valueList = valueList;
-		System.out.println("TT.init=" + target.getClass().getName());
 		targetClass = target.getClass();
 	}
 
@@ -28,14 +27,13 @@ public class TinyCallBackActionListener implements ActionListener {
 		this.target = target;
 		this.valueList = valueList;
 		this.targetClass = targetClass;
-		System.out.println("TT.init=" + target.getClass().getName());
 
 		for (Method m : target.getClass().getMethods()) {
-			System.out.print("m.name = " + m.getName());
+		//	System.out.print("m.name = " + m.getName());
 			for (Class c : m.getParameterTypes()) {
-				System.out.print("  + arg." + c.getSimpleName());
+			//	System.out.print("  + arg." + c.getSimpleName());
 			}
-			System.out.println();
+			//System.out.println();
 		}
 	}
 

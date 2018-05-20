@@ -34,6 +34,8 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import platform.sidenote.util.Debug;
+
 public class OT_Popup extends JPopupMenu implements ActionListener {
 
 	protected JComponent source = null;
@@ -54,7 +56,7 @@ public class OT_Popup extends JPopupMenu implements ActionListener {
 			JMenuItem menuItem = new JMenuItem(values[0]);
 			menuItem.addActionListener(this);
 			this.add(menuItem);
-			System.out.println("Popup.addMenu(" + values[0]);
+		//	System.out.println("Popup.addMenu(" + values[0]);
 		}
 	}
 

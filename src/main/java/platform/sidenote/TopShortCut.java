@@ -12,9 +12,11 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
 
+import platform.sidenote.util.Debug;
+
 public class TopShortCut extends JPanel implements MouseListener {
 
- 	Debug logger = Debug.getLogger(this.getClass());
+	Debug logger = Debug.getLogger(this.getClass());
 	ActionListener actionListener = null;
 	TinyLabel first = new TinyLabel("value");
 	int pos = 2;
@@ -33,12 +35,12 @@ public class TopShortCut extends JPanel implements MouseListener {
 		TinyLabel label = new TinyLabel(name);
 		this.add(label);
 	}
-	
+
 	public void valueChanged() {
-	//	logger.info("");
+		// logger.info("");
 		first.setBackground(Color.orange);
 		updateUI();
-		
+
 	}
 
 	@Override
@@ -49,7 +51,7 @@ public class TopShortCut extends JPanel implements MouseListener {
 			if (c.contains(p)) {
 				// (x >= 0) && (x < width) && (y >= 0) && (y < height)
 				logger.info("name=" + c.getName());
-				if ( c.getName().equals("SAVE")) {
+				if (c.getName().equals("SAVE")) {
 					first.setBackground(Color.LIGHT_GRAY);
 					updateUI();
 				}
@@ -87,8 +89,6 @@ public class TopShortCut extends JPanel implements MouseListener {
 		this.actionListener = actionListener;
 
 	}
-
-
 
 	// public class TextButton {
 	// String command = "Button";

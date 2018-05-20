@@ -30,6 +30,8 @@ import javax.swing.text.StyledDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import platform.sidenote.util.TinyValue;
+
 public class TaskTreeController implements TreeSelectionListener {
 
 	private DataTreeModel treeModel = new TaskTreeModel();
@@ -38,6 +40,8 @@ public class TaskTreeController implements TreeSelectionListener {
 	private JTextPane noteEditor = new JTextPane();
 	private DefaultMutableTreeNode fromNode = null;
 	// Debug logger = Debug.getLogger(this.getClass());
+	public boolean openNote = false;
+//	private TinyToolbar buttonMenu;
 
 	TinyToolbar menubar = new TinyToolbar() {
 		@Override
@@ -227,7 +231,7 @@ public class TaskTreeController implements TreeSelectionListener {
 
 	public void valueChanged() {
 		valueChangedCount++;
-		buttonMenu.valueChanged();
+		menubar.valueChanged();
 	}
 
 	// **************************************************************
@@ -320,8 +324,7 @@ public class TaskTreeController implements TreeSelectionListener {
 		}
 	}
 
-	public boolean openNote = false;
-	private TinyToolbar buttonMenu;
+
 
 	public void expensionFrame() {
 		if (openNote) {
@@ -352,8 +355,8 @@ public class TaskTreeController implements TreeSelectionListener {
 
 	}
 
-	public void setButtonMenu(TinyToolbar menubar) {
-		buttonMenu = menubar;
-	}
+//	public void setButtonMenu(TinyToolbar menubar) {
+//		buttonMenu = menubar;
+//	}
 
 }

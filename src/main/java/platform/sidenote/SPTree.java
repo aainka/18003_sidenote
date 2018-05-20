@@ -22,6 +22,8 @@ import javax.swing.tree.TreeSelectionModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import platform.sidenote.util.Debug;
+
 public class SPTree extends JTree {
 
 	private Debug logger = Debug.getLogger(this.getClass());
@@ -38,6 +40,7 @@ public class SPTree extends JTree {
 		this.setDragEnabled(true);
 
 		this.setDropMode(DropMode.ON_OR_INSERT);
+		 
 		this.setTransferHandler(new TreeTransferHandler99());
 		// expandTree(this);
 
@@ -125,9 +128,7 @@ class TreeTransferHandler99 extends TransferHandler {
 	}
 
 	@Override
-	// Drag�� �����ϸ� �̵��� ��ü�� �����. JTree�� Point�� �Ѱܹ޴´�. #1
 	protected Transferable createTransferable(JComponent c) {
-
 		JTree tree = (JTree) c;
 		DataTreeModel treeModel = (DataTreeModel) tree.getModel();
 		TreePath[] paths = tree.getSelectionPaths();
@@ -166,10 +167,12 @@ class TreeTransferHandler99 extends TransferHandler {
 
 	// only check drop location
 	public boolean canImport(TransferHandler.TransferSupport support) {
+		System.out.println("+  importData (1)  ::::: "  );
 		if (!support.isDrop()) {
 			return false;
 		}
 		support.setShowDropLocation(true);
+		System.out.println("+  importData (2)  ::::: "  );
 		// if (!support.isDataFlavorSupported(nodesFlavor)) {
 		// return false;
 		// }
@@ -187,10 +190,10 @@ class TreeTransferHandler99 extends TransferHandler {
 	}
 
 	public boolean importData(TransferHandler.TransferSupport support) {
-		System.out.println("import----" + support);
+		System.out.println("importData (1)  ::::: "  );
 		Transferable t2 = support.getTransferable();
 		try {
-			System.out.println("getUserDropAction::----" + t2.getTransferData(nodesFlavor));
+			System.out.println("getUserDropAction::" + t2.getTransferData(nodesFlavor));
 		} catch (UnsupportedFlavorException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -198,17 +201,18 @@ class TreeTransferHandler99 extends TransferHandler {
 		if (!canImport(support)) {
 			return false;
 		}
-
+		System.out.println("importData (2) ::::: "  );
 		// Extract transfer data.
 		DefaultMutableTreeNode[] nodes = null;
 		try {
 			Transferable t = support.getTransferable();
-			nodes = (DefaultMutableTreeNode[]) t.getTransferData(nodesFlavor); // <-----------
+			nodes = (DefaultMutableTreeNode[]) t.getTransferData(nodesFlavor);  
 		} catch (UnsupportedFlavorException ufe) {
 			System.out.println("UnsupportedFlavor: " + ufe.getMessage());
 		} catch (java.io.IOException ioe) {
 			System.out.println("I/O error: " + ioe.getMessage());
 		}
+		System.out.println("importData (3) : data load ok "  );
 		// Get drop location info.
 		JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();
 		int childIndex = dl.getChildIndex();

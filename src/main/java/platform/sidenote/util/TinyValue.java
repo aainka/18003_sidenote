@@ -1,4 +1,4 @@
-package platform.sidenote;
+package platform.sidenote.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +29,10 @@ public class TinyValue {
 	}
 
 	public static String[] parseArg(String s) {
-		System.out.println("arg[] parse =" + s);
+	//	System.out.println("arg[] parse =" + s);
 		String sArg[] = s.split(",");
 		for (String w : sArg) {
-			System.out.println("arg[] parse.w =" + w);
+	//		System.out.println("arg[] parse.w =" + w);
 		}
 		return sArg;
 	}

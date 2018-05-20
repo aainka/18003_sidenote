@@ -3,9 +3,12 @@ package platform.sidenote;
 import java.awt.Color;
 import java.awt.Component;
 
+import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+
+import platform.sidenote.util.Debug;
 
 public class TaskTreeCellRenderer extends DefaultTreeCellRenderer {
 
@@ -16,30 +19,31 @@ public class TaskTreeCellRenderer extends DefaultTreeCellRenderer {
 	private Color colorPriority = new Color(253, 240, 225);
 
 	public TaskTreeCellRenderer() {
-		this.setOpaque(true);
+		// this.setOpaque(true);
+		this.setBackgroundSelectionColor(colorSelected);
 	}
 
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
 			boolean leaf, int row, boolean hasFocus) {
 
-		Component comp = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+		JComponent comp = (JComponent) super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row,
+				hasFocus);
 
-		comp.setBackground(Color.WHITE); // root node
+		comp.setOpaque(false);
 
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 		if (node.getUserObject().getClass() != String.class) {
 			OV_Task task = (OV_Task) node.getUserObject();
 
-			comp = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
-
-			if (selected) {
+			if (selected || hasFocus) {
 				comp.setBackground(colorSelected);
 			} else {
 				if (task.priority == 0) {
 					comp.setBackground(Color.WHITE);
 				} else {
 					if (task.priority > 5) {
+						comp.setOpaque(true);
 						comp.setBackground(colorTitle);
 					} else {
 						comp.setBackground(colorPriority);
