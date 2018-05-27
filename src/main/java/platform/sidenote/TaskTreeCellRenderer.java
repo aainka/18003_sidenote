@@ -46,6 +46,7 @@ public class TaskTreeCellRenderer extends DefaultTreeCellRenderer {
 						comp.setOpaque(true);
 						comp.setBackground(colorTitle);
 					} else {
+						comp.setOpaque(true);
 						comp.setBackground(colorPriority);
 					}
 				}

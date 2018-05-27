@@ -1,5 +1,7 @@
 package platform.sidenote;
 
+import java.util.List;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -9,7 +11,7 @@ public abstract class DataTreeModel extends DefaultTreeModel {
 
 	public abstract int saveNodes();
 
-	public abstract int loadNodes();
+	public abstract List<OV_Task> loadNodes();
 
 	public abstract DefaultMutableTreeNode createNode(DefaultMutableTreeNode parent, Object value);
 

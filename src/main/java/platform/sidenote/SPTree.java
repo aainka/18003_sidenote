@@ -82,24 +82,7 @@ public class SPTree extends JTree {
 		return task;
 	}
 
-	public void _collapseAll(SPTree tree, Point poped) {
-		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-		// TreePath treePath = tree.getSelectionPath();
-		TreePath treePath = this.getClosestPathForLocation(poped.x, poped.y);
-
-		if (treePath == null) {
-			return;
-		}
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) treePath.getLastPathComponent();
-
-		Enumeration e = node.children();
-		while (e.hasMoreElements()) {
-			DefaultMutableTreeNode child = (DefaultMutableTreeNode) e.nextElement();
-			TreeNode[] a = child.getPath();
-			TreePath path = new TreePath(child.getPath());
-			tree.collapsePath(path);
-		}
-	}
+	
 
 
 

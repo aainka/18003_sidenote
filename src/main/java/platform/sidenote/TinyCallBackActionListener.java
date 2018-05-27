@@ -7,6 +7,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+
 public class TinyCallBackActionListener implements ActionListener {
 
 	private Object target = null;
@@ -28,13 +31,10 @@ public class TinyCallBackActionListener implements ActionListener {
 		this.valueList = valueList;
 		this.targetClass = targetClass;
 
-		for (Method m : target.getClass().getMethods()) {
-		//	System.out.print("m.name = " + m.getName());
-			for (Class c : m.getParameterTypes()) {
-			//	System.out.print("  + arg." + c.getSimpleName());
-			}
-			//System.out.println();
-		}
+//		for (Method m : target.getClass().getMethods()) {
+//			for (Class c : m.getParameterTypes()) {
+//			}
+//		}
 	}
 
 	public void setMousePupupPoint(Point mousePupupPoint) {
@@ -56,24 +56,13 @@ public class TinyCallBackActionListener implements ActionListener {
 					break;
 				}
 			}
-//			System.out.println("CallBackAction:: actionPerformed() func=" + func);
-//			for (Method m : target.getClass().getMethods()) {
-//				if (m.getName().indexOf("_") >= 0) {
-//					System.out.println("### CB has call : " + m.getName());
-//					for (Class c : m.getParameterTypes()) {
-//						System.out.println("  + arg." + c.getSimpleName());
-//					}
-//				}
-//			}
 			Class[] parameterTypes = new Class[] { Object.class, Point.class };
 			Method method = target.getClass().getMethod(func, parameterTypes);
 			method.invoke(target, target, mousePupupPoint);
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			  e.printStackTrace();
-//			System.out.println("TinyCallBackActionListener [ERROR] " //
-//					+ target.getClass().getName() + "." + func + "()");
+			String msg = "NoCallBack \nObject = "+target.getClass()+"\nfunc="+func+"(Object, Point)";
+			JOptionPane.showMessageDialog(null, msg);
 		}
 	}
 

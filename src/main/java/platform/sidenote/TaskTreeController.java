@@ -11,16 +11,21 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Document;
@@ -28,13 +33,17 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import platform.sidenote.util.TinyValue;
 
 public class TaskTreeController implements TreeSelectionListener {
 
-	private DataTreeModel treeModel = new TaskTreeModel();
+	TaskTableModel tableModel = new TaskTableModel(this);
+	JTable table = new JTable(tableModel);
+	private TaskTreeModel treeModel = new TaskTreeModel(this);
 	private SPTree treeView = new SPTree(treeModel);
 	private JTextField textNew = new JTextField();
 	private JTextPane noteEditor = new JTextPane();
@@ -89,15 +98,34 @@ public class TaskTreeController implements TreeSelectionListener {
 	OT_Popup pp = new OT_Popup() {
 		@Override
 		public void init() {
-			String cmds = "(Collapse,collaspse),(Priority,priority),(Title,title)";
+			String cmds = "(Collapse,collapse),(Priority,priority),(Title,title)";
 			List<String[]> valueList = TinyValue.parse(cmds);
 			addMenu(valueList);
 			l = new TinyCallBackActionListener(this, OT_Popup.class, valueList);
 			source = treeView;
 			treeView.setComponentPopupMenu(this);
 		}
+		
+		public void _collapse(Object source, Point poped) {
+			DefaultTreeModel model = (DefaultTreeModel) treeView.getModel();
+			// TreePath treePath = tree.getSelectionPath();
+			TreePath treePath = treeView.getClosestPathForLocation(poped.x, poped.y);
 
-		public void _setPriority(Object source, Point poped) {
+			if (treePath == null) {
+				return;
+			}
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+
+			Enumeration e = node.children();
+			while (e.hasMoreElements()) {
+				DefaultMutableTreeNode child = (DefaultMutableTreeNode) e.nextElement();
+				TreeNode[] a = child.getPath();
+				TreePath path = new TreePath(child.getPath());
+				treeView.collapsePath(path);
+			}
+		}
+
+		public void _priority(Object source, Point poped) {
 			OV_Task task = treeView.getTaskAt(poped);
 			if (task.priority > 0) {
 				task.priority = 0;
@@ -105,9 +133,10 @@ public class TaskTreeController implements TreeSelectionListener {
 				task.priority = 1;
 			}
 			treeView.updateUI();
+			updateTableModel();
 		}
 
-		public void _title(OT_Popup popup, Point poped) {
+		public void _title(Object source, Point poped) {
 			OV_Task task = treeView.getTaskAt(poped);
 			task.priority = 6;
 			treeView.updateUI();
@@ -127,6 +156,13 @@ public class TaskTreeController implements TreeSelectionListener {
 		updateNoteToNode();
 		int count = treeModel.saveNodes();
 		JOptionPane.showMessageDialog(null, "" + count + " recodes are saved");
+	}
+	
+	public void updateTableModel() {
+	List<OV_Task> list = new ArrayList<OV_Task>();
+	treeModel.buildAllNode(0, list, (DefaultMutableTreeNode) treeModel.getRoot());
+	tableModel.buildData(list);
+	table.updateUI();
 	}
 
 	// **************************************************************
@@ -164,8 +200,20 @@ public class TaskTreeController implements TreeSelectionListener {
 		});
 		container.add(BorderLayout.NORTH, textNew);
 		{
+			
+		
+			JScrollPane scTable = new JScrollPane(table);
+			scTable.setPreferredSize(new Dimension (100,250));
+			JScrollPane scTreeView = new JScrollPane(treeView);
+			JPanel pan = new JPanel();
+			pan.setLayout(new BorderLayout());
+			pan.add(BorderLayout.CENTER, scTreeView);
+			pan.add(BorderLayout.SOUTH, scTable);
+			
+			JScrollPane scNoteEditor = new JScrollPane(noteEditor);
+		
 			treeView.setMinimumSize(new Dimension(400, 100));
-			JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeView, noteEditor);
+			JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pan, scNoteEditor);
 			splitPane.setContinuousLayout(true);
 			splitPane.setOneTouchExpandable(true);
 			splitPane.setDividerLocation(500);

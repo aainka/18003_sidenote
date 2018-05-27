@@ -31,7 +31,7 @@ import platform.sidenote.restapi.RestClient;
 
 public class TaskTreeModel extends DataTreeModel {
 
-	private List<OV_Task> list = null;
+	// private List<OV_Task> list = null;
 
 	RestClient client = new RestClient();
 
@@ -39,10 +39,12 @@ public class TaskTreeModel extends DataTreeModel {
 	Type listType = new TypeToken<List<OV_Task>>() {
 	}.getType();
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	TaskTreeController taskTreeController;
 
-	public TaskTreeModel() {
-		System.out.println("LOAD TREE ");
-		loadNodes();
+	public TaskTreeModel(TaskTreeController taskTreeController) {
+		this.taskTreeController = taskTreeController;
+		List<OV_Task> list = loadNodes();
+		taskTreeController.tableModel.buildData(list);
 	}
 
 	public static File getFile() {
@@ -107,8 +109,8 @@ public class TaskTreeModel extends DataTreeModel {
 
 	@Override
 	public int saveNodes() {
-		list = new ArrayList<OV_Task>();
-		buildSaveList(0, (DefaultMutableTreeNode) this.getRoot());
+		List<OV_Task> list = new ArrayList<OV_Task>();
+		buildAllNode(0, list, (DefaultMutableTreeNode) this.getRoot());
 		int count;
 		if (HostConfig.isWebMode()) {
 			count = webSave(list);
@@ -119,7 +121,7 @@ public class TaskTreeModel extends DataTreeModel {
 
 	}
 
-	private void buildSaveList(int parent_id, DefaultMutableTreeNode node) {
+	public void buildAllNode(int parent_id, List<OV_Task> list, DefaultMutableTreeNode node) {
 		if (node.getChildCount() == 0) {
 			return;
 		}
@@ -128,17 +130,19 @@ public class TaskTreeModel extends DataTreeModel {
 			OV_Task task = (OV_Task) child.getUserObject();
 			task.parent_id = parent_id;
 			list.add(task);
-			buildSaveList(task.id, child);
+			buildAllNode(task.id, list, child);
 			child = child.getNextSibling();
 		}
 	}
+	
+	
 
 	// ************************************************************
 	// *** LOAD
 	// ************************************************************
 
 	@Override
-	public int loadNodes() {
+	public List<OV_Task> loadNodes() {
 		System.out.println("LOAD DATA");
 		seqNumber = 1;
 		HashMap<Integer, DefaultMutableTreeNode> map = new HashMap<Integer, DefaultMutableTreeNode>();
@@ -175,11 +179,11 @@ public class TaskTreeModel extends DataTreeModel {
 					task.id = seqNumber++;
 				}
 			}
-			return list.size();
+			return list ;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return -1;
+		return null;
 	}
 
 	@Override
