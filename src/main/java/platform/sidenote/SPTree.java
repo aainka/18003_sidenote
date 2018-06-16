@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -15,7 +14,6 @@ import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -35,17 +33,17 @@ public class SPTree extends JTree {
 
 	public void init() {
 		this.setAutoscrolls(true);
-		this.setRootVisible(true);
+		this.setRootVisible(false);
 		this.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
-		this.setDragEnabled(true);
+		{
+			setDragEnabled(true);
+			setDropMode(DropMode.ON_OR_INSERT); // ON은 특정Folder내 Add를 의미한다.
+			setTransferHandler(new TreeTransferHandler99());
+		}
 
-		this.setDropMode(DropMode.ON_OR_INSERT);
-		 
-		this.setTransferHandler(new TreeTransferHandler99());
 		// expandTree(this);
 
 		this.setCellRenderer(new TaskTreeCellRenderer());
-
 
 	}
 
@@ -81,10 +79,6 @@ public class SPTree extends JTree {
 		OV_Task task = (OV_Task) node.getUserObject();
 		return task;
 	}
-
-	
-
-
 
 }
 
@@ -150,12 +144,13 @@ class TreeTransferHandler99 extends TransferHandler {
 
 	// only check drop location
 	public boolean canImport(TransferHandler.TransferSupport support) {
-		System.out.println("+  importData (1)  ::::: "  );
+		System.out.println("[12..] ImportData from Clipboard.");
 		if (!support.isDrop()) {
-			return false;
+			System.out.println("[12E1] ImportData from Clipboard.");
+			// return false;
+			return true; // 마우스 Drop이 아니더라도 삽입허용 (Control-V)
 		}
 		support.setShowDropLocation(true);
-		System.out.println("+  importData (2)  ::::: "  );
 		// if (!support.isDataFlavorSupported(nodesFlavor)) {
 		// return false;
 		// }
@@ -173,48 +168,64 @@ class TreeTransferHandler99 extends TransferHandler {
 	}
 
 	public boolean importData(TransferHandler.TransferSupport support) {
-		System.out.println("importData (1)  ::::: "  );
-		Transferable t2 = support.getTransferable();
-		try {
-			System.out.println("getUserDropAction::" + t2.getTransferData(nodesFlavor));
-		} catch (UnsupportedFlavorException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		System.out.println("[1...] ImportData from Clipboard.");
+		// Transferable t2 = support.getTransferable();
+		// try {
+		// System.out.println("getUserDropAction::" + t2.getTransferData(nodesFlavor));
+		// } catch (UnsupportedFlavorException | IOException e) {
+		// // TODO Auto-generated catch block
+		// System.out.println("[E1..] ImportData from Clipboard.");
+		// e.printStackTrace();
+		// }
 		if (!canImport(support)) {
+			System.out.println("[E2..] ImportData from Clipboard.");
 			return false;
 		}
-		System.out.println("importData (2) ::::: "  );
+		System.out.println("importData (2) ::::: ");
 		// Extract transfer data.
 		DefaultMutableTreeNode[] nodes = null;
 		try {
 			Transferable t = support.getTransferable();
-			nodes = (DefaultMutableTreeNode[]) t.getTransferData(nodesFlavor);  
+			nodes = (DefaultMutableTreeNode[]) t.getTransferData(nodesFlavor);
 		} catch (UnsupportedFlavorException ufe) {
 			System.out.println("UnsupportedFlavor: " + ufe.getMessage());
 		} catch (java.io.IOException ioe) {
 			System.out.println("I/O error: " + ioe.getMessage());
 		}
-		System.out.println("importData (3) : data load ok "  );
-		// Get drop location info.
-		JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();
-		int childIndex = dl.getChildIndex();
-		TreePath dest = dl.getPath();
-		DefaultMutableTreeNode parent = (DefaultMutableTreeNode) dest.getLastPathComponent();
+
 		JTree tree = (JTree) support.getComponent();
-		DataTreeModel treeModel = (DataTreeModel) tree.getModel();
-		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-		// Configure for drop mode.
-		int index = childIndex; // DropMode.INSERT
-		System.out.println("2) importData.--1");
-		if (childIndex == -1) { // DropMode.ON
-			index = parent.getChildCount();
+		if (support.isDrop()) {
+			// Get drop location info.
+			JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();
+			int childIndex = dl.getChildIndex();
+			TreePath dest = dl.getPath();
+			DefaultMutableTreeNode parent = (DefaultMutableTreeNode) dest.getLastPathComponent();
+
+			DataTreeModel treeModel = (DataTreeModel) tree.getModel();
+			DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+			// Configure for drop mode.
+			int index = childIndex; // DropMode.INSERT
+			if (childIndex == -1) { // DropMode.ON
+				index = parent.getChildCount();
+			}
+			// Add data to model.
+			for (int i = 0; i < nodes.length; i++) {
+				// model.insertNodeInto(nodes[i], parent, index++);
+				model.insertNodeInto(treeModel.decodeTreeNode((String) nodes[i].getUserObject()), parent, index++);
+			}
+		} else {
+			System.out.println("NonDrop Insert (Conrol-X,C,V): ");
+			DefaultMutableTreeNode parent = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+			DataTreeModel treeModel = (DataTreeModel) tree.getModel();
+			DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+			int index = parent.getChildCount();
+			// Add data to model.
+			for (int i = 0; i < nodes.length; i++) {
+				// model.insertNodeInto(nodes[i], parent, index++);
+				model.insertNodeInto(treeModel.decodeTreeNode((String) nodes[i].getUserObject()), parent, index++);
+			}
 		}
-		// Add data to model.
-		for (int i = 0; i < nodes.length; i++) {
-			// model.insertNodeInto(nodes[i], parent, index++);
-			model.insertNodeInto(treeModel.decodeTreeNode((String) nodes[i].getUserObject()), parent, index++);
-		}
+
 		return true;
 	}
 
@@ -234,8 +245,6 @@ class TreeTransferHandler99 extends TransferHandler {
 		DefaultMutableTreeNode[] nodes;
 
 		public NodesTransfer22(DefaultMutableTreeNode[] nodes) {
-			System.out.println("make NodeTransfer");
-			;
 			this.nodes = nodes;
 		}
 

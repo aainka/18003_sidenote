@@ -39,6 +39,7 @@ public class TaskTreeCellRenderer extends DefaultTreeCellRenderer {
 			if (selected || hasFocus) {
 				comp.setBackground(colorSelected);
 			} else {
+
 				if (task.priority == 0) {
 					comp.setBackground(Color.WHITE);
 				} else {
@@ -50,9 +51,22 @@ public class TaskTreeCellRenderer extends DefaultTreeCellRenderer {
 						comp.setBackground(colorPriority);
 					}
 				}
+				if (isCompleted(node)) {
+					comp.setOpaque(true);
+					comp.setBackground(Color.lightGray);
+					comp.setForeground(Color.WHITE);
+				}
 			}
 		}
 		return comp;
+	}
+
+	private boolean isCompleted(DefaultMutableTreeNode node) {
+		OV_Task task = (OV_Task) node.getUserObject();
+		if ( task.note != null && task.note.indexOf("@완료") >= 0 ) {
+			return true;
+		}
+		return false;
 	}
 
 }
