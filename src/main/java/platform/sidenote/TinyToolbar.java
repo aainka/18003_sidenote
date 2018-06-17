@@ -17,7 +17,7 @@ import platform.sidenote.util.Debug;
 
 public class TinyToolbar extends JPanel implements MouseListener {
 
- 	Debug logger = Debug.getLogger(this.getClass());
+	Debug logger = Debug.getLogger(this.getClass());
 	ActionListener actionListener = null;
 	TinyLabel first = new TinyLabel("value");
 	int pos = 2;
@@ -32,28 +32,27 @@ public class TinyToolbar extends JPanel implements MouseListener {
 		this.add(first);
 		init();
 	}
-	
+
 	public void init() {
-		
+
 	}
-	
+
 	protected void addMenu(List<String[]> valueList) {
-		for ( String[] values : valueList) {
-		TinyLabel label = new TinyLabel(values[0]);
-		this.add(label);
+		for (String[] values : valueList) {
+			TinyLabel label = new TinyLabel(values[0]);
+			this.add(label);
 		}
 	}
-	
+
 	public void add2(String name) {
 		TinyLabel label = new TinyLabel(name);
 		this.add(label);
 	}
-	
+
 	public void valueChanged() {
-	//	logger.info("");
+		// logger.info("");
 		first.setBackground(Color.orange);
 		updateUI();
-		
 	}
 
 	@Override
@@ -62,18 +61,31 @@ public class TinyToolbar extends JPanel implements MouseListener {
 		for (Component c : getComponents()) {
 			// logger.info(""+c.getX()+", "+c.getY()+","+c.getPreferredSize());
 			if (c.contains(p)) {
+				Color prev = c.getBackground();
+				c.setBackground(Color.cyan);
+				repaint();
 				// (x >= 0) && (x < width) && (y >= 0) && (y < height)
 				logger.info("name=" + c.getName());
-				if ( c.getName().equals("SAVE")) {
+				if (c.getName().equals("SAVE")) {
 					first.setBackground(Color.LIGHT_GRAY);
 					updateUI();
 				}
+				c.setBackground(prev);
+				repaint();
 				ActionEvent event = new ActionEvent(this, 0, c.getName());
 				actionListener.actionPerformed(event);
+			
 			}
 		}
 	}
 
+//	 EventQueue.invokeLater(new Runnable() {
+//
+//         @Override
+//         public void run() {
+//             new Test().display();
+//         }
+//     });
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
@@ -102,8 +114,6 @@ public class TinyToolbar extends JPanel implements MouseListener {
 		this.actionListener = actionListener;
 
 	}
-
-
 
 	// public class TextButton {
 	// String command = "Button";

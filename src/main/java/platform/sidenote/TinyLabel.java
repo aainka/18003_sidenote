@@ -22,10 +22,11 @@ public class TinyLabel extends Component {
 		this.setName(name);
 		this.setPreferredSize(new Dimension(40, 20));
 	}
+	
 
 	@Override
 	public void paint(Graphics g) {
-		// logger.info("name="+this.getName());
+		logger.info("name="+this.getName());
 		g.setColor(this.getBackground());
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(Color.BLACK);
