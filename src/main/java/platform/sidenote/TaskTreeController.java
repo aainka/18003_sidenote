@@ -38,7 +38,7 @@ public class TaskTreeController implements TreeSelectionListener {
 	private DefaultMutableTreeNode fromNode = null;
 	private SPFrame frame;
 	// Debug logger = Debug.getLogger(this.getClass());
-  	private SPNoteEditor editor = new SPNoteEditor();
+   	private SPNoteEditor editor = new SPNoteEditor();
 
 	TinyToolbar menubar = new TinyToolbar() {
 		@Override
@@ -208,7 +208,7 @@ public class TaskTreeController implements TreeSelectionListener {
 				}
 			}
 		});
-		JScrollPane scNoteEditor = new JScrollPane(editor);
+	//	JScrollPane scNoteEditor = new JScrollPane(editor);
 
 		treeView.addTreeSelectionListener(this);
 		JPanel container = new JPanel();
@@ -223,16 +223,14 @@ public class TaskTreeController implements TreeSelectionListener {
 			pan.add(BorderLayout.CENTER, scTreeView);
 			pan.add(BorderLayout.SOUTH, scTable);
 			
-			scNoteEditor.setMinimumSize( new Dimension(1, 100));
-			 
 
-			JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pan, scNoteEditor);
+			JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pan, editor.addScroll(10,10));
 			splitPane.setPreferredSize(new Dimension(400, 100));
 			System.out.println("s3="+splitPane.getPreferredSize());
 			//splitPane.setContinuousLayout(true);
 			//splitPane.setOneTouchExpandable(true);
-			splitPane.setDividerLocation(500);
-			splitPane.setDividerSize(10);
+			splitPane.setDividerLocation(600);
+			splitPane.setDividerSize(5);
 			//splitPane.setPreferredSize(new Dimension(600, 100));
 			container.add(BorderLayout.CENTER, splitPane);
 		}
