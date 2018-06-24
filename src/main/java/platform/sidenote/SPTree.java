@@ -33,7 +33,7 @@ public class SPTree extends JTree {
 
 	public void init() {
 		this.setAutoscrolls(true);
-		this.setRootVisible(false);
+		this.setRootVisible(true);
 		this.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
 		{
 			setDragEnabled(true);

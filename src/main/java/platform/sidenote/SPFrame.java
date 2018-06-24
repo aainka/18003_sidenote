@@ -12,11 +12,14 @@ import javax.swing.JTabbedPane;
 public class SPFrame extends JFrame {
 
 	TaskTreeController controller = new TaskTreeController();
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
 	public void init() {
+		
+		controller.setFrame(this);
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int width = 400;
+		int width = 350;
 		int height = (int) screenSize.getHeight() - 50;
 
 		Dimension windowSize = new Dimension(width, height);
@@ -61,8 +64,20 @@ public class SPFrame extends JFrame {
 	// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
 
 	public static final void main(String[] args) {
-		// DataTreeModel treeModel = new StringTreeModel();
-
 		new SPFrame().init();
+	}
+
+	public void alignRight() {
+		Dimension frameSize = this.getSize();
+		int x =  screenSize.width - frameSize.width ;
+		int y = 0;
+		this.setLocation(x, y);
+	}
+	
+	public void alignCentor() {
+		Dimension frameSize = this.getSize();
+		int x = (screenSize.width - frameSize.width) / 2;
+		int y = (screenSize.height - frameSize.height) / 2;
+		this.setLocation(x, y);
 	}
 }

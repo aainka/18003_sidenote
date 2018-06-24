@@ -1,11 +1,9 @@
 package platform.sidenote;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -15,23 +13,14 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.table.TableModel;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Document;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -44,18 +33,17 @@ public class TaskTreeController implements TreeSelectionListener {
 	TaskTableModel tableModel = new TaskTableModel(this);
 	JTable table = new JTable(tableModel);
 	private TaskTreeModel treeModel = new TaskTreeModel(this);
-	private SPTree treeView = new SPTree(treeModel);
+ 	private SPTree treeView = new SPTree(treeModel);
 	private JTextField textNew = new JTextField();
-	private JTextPane noteEditor = new JTextPane();
 	private DefaultMutableTreeNode fromNode = null;
+	private SPFrame frame;
 	// Debug logger = Debug.getLogger(this.getClass());
-	public boolean openNote = false;
-//	private TinyToolbar buttonMenu;
+  	private SPNoteEditor editor = new SPNoteEditor();
 
 	TinyToolbar menubar = new TinyToolbar() {
 		@Override
 		public void init() {
-			String cmds = "(SAVE,save),(PRINT,print),(ETC,testETC)";
+			String cmds = "(SAVE,save),(PRINT,print),(Edit,editMode)";
 			List<String[]> valueList = TinyValue.parse(cmds);
 			addMenu(valueList);
 			TinyCallBackActionListener listener = new TinyCallBackActionListener(this, valueList);
@@ -67,6 +55,10 @@ public class TaskTreeController implements TreeSelectionListener {
 			// int count = treeModel.saveNodes();
 			// JOptionPane.showMessageDialog(null, "" + count + " recodes are saved");
 			__save();
+		}
+
+		public void _editMode(Object source, Point p) {
+			toggleFrameMode();
 		}
 
 		public void _WR(TaskTreeController controller, Point p) {
@@ -105,7 +97,7 @@ public class TaskTreeController implements TreeSelectionListener {
 			source = treeView;
 			treeView.setComponentPopupMenu(this);
 		}
-		
+
 		public void _collapse(Object source, Point poped) {
 			DefaultTreeModel model = (DefaultTreeModel) treeView.getModel();
 			// TreePath treePath = tree.getSelectionPath();
@@ -144,8 +136,8 @@ public class TaskTreeController implements TreeSelectionListener {
 	};
 
 	public TaskTreeController() {
-		Document blank = new DefaultStyledDocument();
-		noteEditor.setDocument(blank);
+		// Document blank = new DefaultStyledDocument();
+		// noteEditor.setDocument(blank);
 	}
 
 	public TinyToolbar getMenubar() {
@@ -157,12 +149,12 @@ public class TaskTreeController implements TreeSelectionListener {
 		int count = treeModel.saveNodes();
 		JOptionPane.showMessageDialog(null, "" + count + " recodes are saved");
 	}
-	
+
 	public void updateTableModel() {
-	List<OV_Task> list = new ArrayList<OV_Task>();
-	treeModel.buildAllNode(0, list, (DefaultMutableTreeNode) treeModel.getRoot());
-	tableModel.buildData(list);
-	table.updateUI();
+		List<OV_Task> list = new ArrayList<OV_Task>();
+		treeModel.buildAllNode(0, list, (DefaultMutableTreeNode) treeModel.getRoot());
+		tableModel.buildData(list);
+		table.updateUI();
 	}
 
 	// **************************************************************
@@ -170,23 +162,12 @@ public class TaskTreeController implements TreeSelectionListener {
 	// **************************************************************
 
 	public JPanel buildUi() {
-		treeView.addTreeSelectionListener(this);
-		noteEditor.setPreferredSize(new Dimension(500, 100));
-		noteEditor.setMaximumSize(new Dimension(500, 100));
-		noteEditor.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				valueChanged();
-				// coloring();
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					updateNoteToNode();
 
-				}
-			}
-		});
+	
 
-		JPanel container = new JPanel();
-		container.setLayout(new BorderLayout());
+		/**
+		 * New Input
+		 */
 		textNew.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -198,66 +179,137 @@ public class TaskTreeController implements TreeSelectionListener {
 				}
 			}
 		});
+
+		/**
+		 * TreeView
+		 */
+		//  treeView.setMinimumSize(new Dimension(400, 100));
+		 // treeView.setPreferredSize(new Dimension(400, 100));
+		JScrollPane scTreeView = new JScrollPane(treeView);
+		scTreeView.setPreferredSize(new Dimension(400, 250));
+
+		/**
+		 * TodoView
+		 */
+		JScrollPane scTable = new JScrollPane(table);
+		scTable.setPreferredSize(new Dimension(400, 250));
+
+		/**
+		 * NoteEditor
+		 */
+		editor.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				valueChanged();
+				// coloring();
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					updateNoteToNode();
+
+				}
+			}
+		});
+		JScrollPane scNoteEditor = new JScrollPane(editor);
+
+		treeView.addTreeSelectionListener(this);
+		JPanel container = new JPanel();
+		container.setLayout(new BorderLayout());
+
 		container.add(BorderLayout.NORTH, textNew);
 		{
-			
-		
-			JScrollPane scTable = new JScrollPane(table);
-			scTable.setPreferredSize(new Dimension (100,250));
-			JScrollPane scTreeView = new JScrollPane(treeView);
+
 			JPanel pan = new JPanel();
+			pan.setPreferredSize(new Dimension(200, 100));
 			pan.setLayout(new BorderLayout());
 			pan.add(BorderLayout.CENTER, scTreeView);
 			pan.add(BorderLayout.SOUTH, scTable);
 			
-			JScrollPane scNoteEditor = new JScrollPane(noteEditor);
-		
-			treeView.setMinimumSize(new Dimension(400, 100));
+			scNoteEditor.setMinimumSize( new Dimension(1, 100));
+			 
+
 			JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pan, scNoteEditor);
-			splitPane.setContinuousLayout(true);
-			splitPane.setOneTouchExpandable(true);
+			splitPane.setPreferredSize(new Dimension(400, 100));
+			System.out.println("s3="+splitPane.getPreferredSize());
+			//splitPane.setContinuousLayout(true);
+			//splitPane.setOneTouchExpandable(true);
 			splitPane.setDividerLocation(500);
-			splitPane.setDividerSize(12);
-			splitPane.setPreferredSize(new Dimension(600, 100));
+			splitPane.setDividerSize(10);
+			//splitPane.setPreferredSize(new Dimension(600, 100));
 			container.add(BorderLayout.CENTER, splitPane);
 		}
 
 		return container;
 	}
+	private void updateNoteToNode() {
+		if (fromNode != null && (fromNode != treeModel.getRoot())) {
+			if (fromNode.getUserObject().getClass() == OV_Task.class) {
+				OV_Task task = (OV_Task) fromNode.getUserObject();
+				String s = editor.getText();
+				{
+					int pos = s.indexOf("\n");
+					if (pos == -1) {
+						task.subject = s;
+						task.note = null;
+					} else {
+						task.subject = s.substring(0, pos);
+						task.note = s.substring(pos + 1, s.length());
+						if (task.note.length() == 0) {
+							task.note = null;
+						}
+					}
 
-	public void coloring() {
-		StyledDocument doc = (StyledDocument) noteEditor.getStyledDocument();
-
-		Style style = doc.addStyle("I'm a Style", null);
-		StyleConstants.setForeground(style, Color.red);
-		StyleConstants.setBackground(style, Color.YELLOW);
-		try {
-			doc.insertString(doc.getLength(), "BLAH ", style);
-		} catch (BadLocationException ex) {
+				}
+			}
 		}
+		if (fromNode != null && fromNode.getParent() != null) { // move , so isolated
+			treeModel.reload(fromNode);
+		}
+	}
+	
+	public void changeSelection(DefaultMutableTreeNode fromNode, DefaultMutableTreeNode toNode) {
 
-		StyleConstants.setForeground(style, Color.blue);
+		valueChanged();
+		updateNoteToNode();
+		if (toNode != null && toNode != treeModel.getRoot()) {
+			if (toNode.getUserObject().getClass() == OV_Task.class) {
+				OV_Task task = (OV_Task) toNode.getUserObject();
+				if (task.note == null) {
+					task.note = new String("");
+				}
+				String s = task.subject + "\n" + task.note;
+				editor.setText(s);
+			}
+		} else {
+			editor.setText("Do not edit note for root");
+		}
+	}
+	// **********************************
+	// *** FRAME
+	// **********************************
 
-		try {
-			doc.insertString(doc.getLength(), "BLEH", style);
-		} catch (BadLocationException e) {
+	boolean isShowFrameMode = true;
+
+	private void toggleFrameMode() {
+		if (isShowFrameMode) {
+			isShowFrameMode = false;
+			editFrameMode();
+		} else {
+			isShowFrameMode = true;
+			showFrameMode();
 		}
 	}
 
-	// public static void xx(String[] args) {
-	// JTextPane textPane = new JTextPane();
-	// StyledDocument doc = textPane.getStyledDocument();
-	//
-	//
-	// StyleContext sc = StyleContext.getDefaultStyleContext();
-	// AttributeSet aset = sc.addAttribute(
-	// SimpleAttributeSet.EMPTY,
-	// StyleConstants.Foreground, highlightColor);
-	// cobolProgram.setCharacterAttributes(offset, length, aset,
-	// false);
-	//
-	//
-	// }
+	private void editFrameMode() {
+		Dimension size = frame.getSize();
+		frame.setSize(900, size.height);
+		frame.alignCentor();
+	}
+
+	private void showFrameMode() {
+		 
+		Dimension size = frame.getSize();
+		frame.setSize(350, size.height);
+		frame.alignRight();
+	}
 
 	// **************************************************************
 	// *** EVENT Interface
@@ -307,49 +359,9 @@ public class TaskTreeController implements TreeSelectionListener {
 		treeView.expandPath(treePath);
 	}
 
-	private void updateNoteToNode() {
-		if (fromNode != null && (fromNode != treeModel.getRoot())) {
-			if (fromNode.getUserObject().getClass() == OV_Task.class) {
-				OV_Task task = (OV_Task) fromNode.getUserObject();
-				String s = noteEditor.getText();
-				{
-					int pos = s.indexOf("\n");
-					if (pos == -1) {
-						task.subject = s;
-						task.note = null;
-					} else {
-						task.subject = s.substring(0, pos);
-						task.note = s.substring(pos + 1, s.length());
-						if (task.note.length() == 0) {
-							task.note = null;
-						}
-					}
 
-				}
-			}
-		}
-		if (fromNode != null && fromNode.getParent() != null) { // move , so isolated
-			treeModel.reload(fromNode);
-		}
-	}
 
-	public void changeSelection(DefaultMutableTreeNode fromNode, DefaultMutableTreeNode toNode) {
 
-		valueChanged();
-		updateNoteToNode();
-		if (toNode != null && toNode != treeModel.getRoot()) {
-			if (toNode.getUserObject().getClass() == OV_Task.class) {
-				OV_Task task = (OV_Task) toNode.getUserObject();
-				if (task.note == null) {
-					task.note = new String("");
-				}
-				String s = task.subject + "\n" + task.note;
-				noteEditor.setText(s);
-			}
-		} else {
-			noteEditor.setText("Do not edit note for root");
-		}
-	}
 
 	String space = new String("                            ");
 
@@ -372,39 +384,42 @@ public class TaskTreeController implements TreeSelectionListener {
 		}
 	}
 
-
-
-	public void expensionFrame() {
-		if (openNote) {
-			openNote = false;
-			setFrame(400);
-		} else {
-			openNote = true;
-			setFrame(900);
-		}
-	}
-
-	public void setFrame(int width) {
-		JFrame frame = (JFrame) treeView.getTopLevelAncestor();
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int height = (int) screenSize.getHeight() - 50;
-
-		Dimension windowSize = new Dimension(width, height);
-		frame.setSize(windowSize);
-		frame.setLocation(screenSize.width - width, 0);
-
-		// Dimension frameSize = this.getSize();
-		// if (frameSize.height > screenSize.height) {
-		// frameSize.height = screenSize.height;
-		// }
-		// if (frameSize.width > screenSize.width) {
-		// frameSize.width = screenSize.width;
-		// }
+	public void setFrame(SPFrame spFrame) {
+		this.frame = spFrame;
 
 	}
 
-//	public void setButtonMenu(TinyToolbar menubar) {
-//		buttonMenu = menubar;
-//	}
+	// public void expensionFrame() {
+	// if (openNote) {
+	// openNote = false;
+	// setFrame(400);
+	// } else {
+	// openNote = true;
+	// setFrame(900);
+	// }
+	// }
+
+	// public void setFrame(int width) {
+	// JFrame frame = (JFrame) treeView.getTopLevelAncestor();
+	// Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	// int height = (int) screenSize.getHeight() - 50;
+	//
+	// Dimension windowSize = new Dimension(width, height);
+	// frame.setSize(windowSize);
+	// frame.setLocation(screenSize.width - width, 0);
+	//
+	// // Dimension frameSize = this.getSize();
+	// // if (frameSize.height > screenSize.height) {
+	// // frameSize.height = screenSize.height;
+	// // }
+	// // if (frameSize.width > screenSize.width) {
+	// // frameSize.width = screenSize.width;
+	// // }
+	//
+	// }
+
+	// public void setButtonMenu(TinyToolbar menubar) {
+	// buttonMenu = menubar;
+	// }
 
 }
