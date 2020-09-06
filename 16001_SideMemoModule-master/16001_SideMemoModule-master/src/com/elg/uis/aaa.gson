@@ -1,0 +1,256 @@
+[
+  {
+    "id": 68,
+    "subject": "Platform Project",
+    "parent_id": 0,
+    "note": ""
+  },
+  {
+    "id": 69,
+    "subject": "Data Visual Platform",
+    "parent_id": 68
+  },
+  {
+    "id": 86,
+    "subject": "신규질의어 집합기준, 액셀DB생성, 데이타는 네트워크에",
+    "parent_id": 69
+  },
+  {
+    "id": 70,
+    "subject": "Raspberry MP3 Platform",
+    "parent_id": 68,
+    "note": ""
+  },
+  {
+    "id": 79,
+    "subject": "최소의기능 / 음식인식 MP3",
+    "parent_id": 70
+  },
+  {
+    "id": 80,
+    "subject": "기본교육",
+    "parent_id": 70
+  },
+  {
+    "id": 81,
+    "subject": "이미지 SD카드 만들기, 무선랜설정하기",
+    "parent_id": 80,
+    "note": ""
+  },
+  {
+    "id": 71,
+    "subject": "BioBox Platform",
+    "parent_id": 68
+  },
+  {
+    "id": 72,
+    "subject": "NMF Enhanced Platform",
+    "parent_id": 68,
+    "note": ""
+  },
+  {
+    "id": 73,
+    "subject": "SideNode Platform",
+    "parent_id": 68,
+    "note": "\n\n요구사항\n1) 가장 간단하게 할일을 생성할 수 있어야 한다. (등록일자자동, 분류용이)\n2) 포스트잇처럼 깔끔하게 정리되어 모니터 사이드에 항상 표시되어야 한다. (모두보이기)\n3) 원노드처럼 자유로게 작성할 수 있어야 한다. (내용편집이 쉬워야 한다.)\n4) 완료된것은 1개의 Note로 함축되어 목록형태로 저장된다.\n5) 종이로 출력되어야 한다. 지우거나 정리가 장되어야 한다.\n\n번호에 의하여 항목/노트를 자유롭게 변형이 가능하다.\n명령을 수행후에는 확인창이 나타난다.\n저장시 마지막 Note내용이 task로 이동한다. (중요)\n\n\n\n\n\n또 시간낭비하는 것은 아닐까.\n부담이 많이 된다.\n매번 만들면 무엇하나. \n\n이번에는 팔수 있을까?\n\n일단 포스트잇 정도는 되는 것 같다.\n지우는 기능이 있어야 한다.\n\n편집창 위쪽에 지우는 버튼을 두어야 한다.\n\n"
+  },
+  {
+    "id": 82,
+    "subject": "목적",
+    "parent_id": 73,
+    "note": "\n인터넷이 없어도 포스트잇 쓰듯이 간단히 사용할 수 있어야 한다.\n추가적인 기능으로 노트를 비교적 길게 쓸수 있다.\n\n자동기록 : 생성일, 종료처리, 내포관계를 표현하기 쉽다.\n컬러플하다 (색연필을 안사도 된다.)\n\n원노트, 원드라이브 네트워크라고 느리고, 간혹 다운되고 \n지겹다.\n\n\n\n기존의 방법\n공통:  자동 등록날짜 생성, 종료처리등 자동화가 않됨. \n           계층구조표현불가, \n           사이드 상주가 어렵다.\n            \n액셀, 원노트, \nNotePad : 편집은 잘되는데, 유기적관계표현 안됨.\n원노트 : 다 좋은데, 사이드에 상주하기에 GUI가 무거움\n액셀 : 사이드 상주가 어려움. 계층구조 표현불가.\n"
+  },
+  {
+    "id": 83,
+    "subject": "포스트잇을 대치한다.",
+    "parent_id": 82,
+    "note": ""
+  },
+  {
+    "id": 84,
+    "subject": "네트워크에 할일을 저장한다.",
+    "parent_id": 82,
+    "note": ""
+  },
+  {
+    "id": 85,
+    "subject": "생성일, 우선순위, 반복등을 잘 관리한다.",
+    "parent_id": 82,
+    "note": ""
+  },
+  {
+    "id": 102,
+    "subject": "버전",
+    "parent_id": 73,
+    "note": "1. 생성\r\n    quickCreateTextField를 통하여 생성한다.\r\n    valueChanged를 통하여 Note/제목 편집을 한다. (제목편집) --\u003e ok\r\n    생성날짜를 만들수 있다.\r\n\r\n2. 삭제 --\u003eOK\r\n    [휴지통노드를 통하여 삭제 한다.]- control-x로 삭제된다.\r\n\r\n\r\n3. 갱신 \r\n    (편집창을 통하여 한다.)\r\n\r\n4. 저장\r\n    저장후, 오늘 날짜로 백업을 2번저장한다.\r\n\r\n\r\n5. 출력\r\n\r\n\r\n-----------------------------------\r\n2개의 화일로 진화\r\n-----------------------------------\r\n16. 2개의 프로그램간 이송"
+  },
+  {
+    "id": 77,
+    "subject": "이동",
+    "parent_id": 102
+  },
+  {
+    "id": 87,
+    "subject": "좌측에 노트패드가 생성된다.",
+    "parent_id": 102
+  },
+  {
+    "id": 78,
+    "subject": "변경도 반드시 트리상에서 할수 있도록 한다.",
+    "parent_id": 102
+  },
+  {
+    "id": 76,
+    "subject": "변경",
+    "parent_id": 102
+  },
+  {
+    "id": 75,
+    "subject": "생성/삭제",
+    "parent_id": 102,
+    "note": ""
+  },
+  {
+    "id": 74,
+    "subject": "우선 Save/Load 위주로 id 점검",
+    "parent_id": 102,
+    "note": ""
+  },
+  {
+    "id": 89,
+    "subject": "소스라이브러리 확보",
+    "parent_id": 73,
+    "note": ""
+  },
+  {
+    "id": 90,
+    "subject": "JSON 라이브러리",
+    "parent_id": 89,
+    "note": ""
+  },
+  {
+    "id": 91,
+    "subject": "액셀 라이브러리",
+    "parent_id": 89,
+    "note": ""
+  },
+  {
+    "id": 92,
+    "subject": "ObjectValue 라이브러리 ",
+    "parent_id": 89,
+    "note": ""
+  },
+  {
+    "id": 93,
+    "subject": "DragAndDrop 라이브러리 ",
+    "parent_id": 89,
+    "note": ""
+  },
+  {
+    "id": 97,
+    "subject": "문제점",
+    "parent_id": 73,
+    "note": "노트 편집하다가 저장이 않되는 경우 있음.\n---\u003e 1초 마다 Key input있는 경우, 데이타 업데이트가 필요함.\n\n앤터시 자동업그레이드\n\n메모리 업데이트는 했는데, 저장을 안했다.\n--\u003e 프로그램 종료시는 반드시 저장 유무를 확인해야 한다.\n\nMaven , Jar\n\n찐짜 저장 Confirm창을 보여달라.\n\n\n"
+  },
+  {
+    "id": 94,
+    "subject": "현장문제",
+    "parent_id": 0,
+    "note": ""
+  },
+  {
+    "id": 95,
+    "subject": "TechPack/Universe 업그레드 문제(김태현, 김성래)",
+    "parent_id": 94,
+    "note": ""
+  },
+  {
+    "id": 96,
+    "subject": "통계 SGW_SESSION_USAGE",
+    "parent_id": 94,
+    "note": "CLI수집 5분평균값\r\nSGW_DDN_BUFFER_Usage : 변화량 표시시 현재 사용중인데,  값이 같을 경우 0로 출력됨.\r\n--\u003e CLI통계 SNAPSHOT로 변경필요.\r\n\r\nPEG추가\r\nPacket Count에 Byte Count도 추가 필요."
+  },
+  {
+    "id": 98,
+    "subject": "KT5G OSS-RC연동",
+    "parent_id": 94,
+    "note": ""
+  },
+  {
+    "id": 99,
+    "subject": "ENM-NAS 감시 (이제국)",
+    "parent_id": 94
+  },
+  {
+    "id": 100,
+    "subject": "UAT 요청사항 (19,34,38,48) (여재모)",
+    "parent_id": 94,
+    "note": "#21396"
+  },
+  {
+    "id": 103,
+    "subject": "주말점검사항",
+    "parent_id": 0,
+    "note": ""
+  },
+  {
+    "id": 104,
+    "subject": "주간보고 업로드, 타임카드확인",
+    "parent_id": 103,
+    "note": ""
+  },
+  {
+    "id": 105,
+    "subject": "ASN.1 PO발주내기",
+    "parent_id": 103,
+    "note": ""
+  },
+  {
+    "id": 106,
+    "subject": "LGU B2B 비용산정 통지",
+    "parent_id": 103,
+    "note": ""
+  },
+  {
+    "id": 107,
+    "subject": "외주 RFP작성",
+    "parent_id": 103,
+    "note": ""
+  },
+  {
+    "id": 108,
+    "subject": "안전교육이수(5/20)",
+    "parent_id": 103,
+    "note": ""
+  },
+  {
+    "id": 109,
+    "subject": "KT 5G BMT 준비",
+    "parent_id": 103,
+    "note": "ACR(박기범), 김중철(CPM), 황성호(CSR)\r\n"
+  },
+  {
+    "id": 110,
+    "subject": "개인업무",
+    "parent_id": 0,
+    "note": ""
+  },
+  {
+    "id": 111,
+    "subject": "NY투자",
+    "parent_id": 110,
+    "note": ""
+  },
+  {
+    "id": 112,
+    "subject": "자동차 보험",
+    "parent_id": 110,
+    "note": "온라인 다이렉트 보험 알아보기\n날짜를 정확히 알아 두자\n"
+  },
+  {
+    "id": 113,
+    "subject": "김천 서류보내기",
+    "parent_id": 110,
+    "note": ""
+  }
+]
